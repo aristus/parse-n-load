@@ -1,0 +1,58 @@
+<html>
+  <!--
+      Copyright 2010 carlos@bueno.org
+      BSD-style license.
+    -->
+  <head>
+    <title>Parse-n-Load Javascript Test Harness</title>
+    <style>
+      * { font-family: "Helvetica Neue", "Helvetica", "Arial", "Lucida Grande", "sans"; }
+      #flot {
+        height: 150px;
+        width: 600px;
+        margin-right: 50px;
+      }
+      h2 {
+        margin:0;
+        font-weight: normal;
+        color: #900;
+      }
+      fieldset {
+        border: none;
+      }
+      #progress {
+        width: 600px;
+        font-size: smaller;
+        margin-bottom: 10px;
+      }
+    </style>
+    <script src="js/yui2.js"></script>
+    <script src="js/yui.flot.js"></script>
+    <!--[if IE]><script src="js/excanvas.min.js"></script><![endif]-->
+    <script src="js/parse-n-load.js"></script>
+  </head>
+
+  <body>
+    <h2>Parse-n-Load Javascript Test Harness</h2>
+    <p>
+      Enter the path of a <b>local</b> Javascript file, choose the number of test runs, then click "Run Test".
+    </p>
+
+    <fieldset>
+      File Path: <input type="text" size="40" id="js-file" value="test-data/yui3-raw.js" />
+      &nbsp;&nbsp;
+      Runs: <input type="text" size="4" id="num-runs" value="10" />
+      &nbsp;&nbsp;
+      <small><input type="checkbox" id="ignore-spikes" checked="checked" /> 95th percentile</small>
+      &nbsp;&nbsp;
+      <button id="run-test" onclick="runTest();"><b>Run Test</b></button>
+    </fieldset>
+
+    <div id="progress"></div>
+    <div id="flot"></div>
+
+    <iframe name="js" src="blank.html" style="display:none;" id="js" ></iframe>
+
+    <p><b>Why 95th Percentile?</b> If you tun it off you'll probably see tall, regular spikes that dwarf the rest of the measurements. These are caused by the browser pausing to do garbage collection. It's good to remember GC halts but they can get in the way of informative graphs.</p>
+  </body>
+</html>

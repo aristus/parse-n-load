@@ -1,0 +1,194 @@
+<style>
+  * {
+    font-family: "helvetica neue";
+  }
+
+  body {
+    width: 700px;
+    margin: 15px;
+  }
+
+  p {
+    line-height: 1.4em;
+    margin: 0.4em 0 1em 0;
+  }
+
+  h1, h2, h3 {
+    font-weight: normal;
+    margin:0;
+    letter-spacing: 0.07em;
+  }
+  h3 {
+    color: #900;
+  }
+  h2 {
+    color: #555;
+  }
+
+  table.chart {
+    cell-padding: 0;
+    cell-spacing: 0;
+    border-bottom: solid 1px #ddd;
+    border-right: solid 1px #ddd;
+    border-collapse: collapse;
+    border-radius: 10px;
+  }
+
+  table.chart td {
+    border-top: solid 1px #ddd;
+    border-left: solid 1px #ddd;
+    margin:0;
+    font-size: 10pt;
+    padding: 8px;
+    vertical-align: center;
+    text-align: center;
+    height: 3em;
+  }
+
+  table.chart th {
+    padding: 8px 10px;
+    background: #dad4d8;
+    border-right: solid 1px #eee;
+    font-weight: normal;
+    font-size: 10pt;
+  }
+
+  table.chart td.v {
+    white-space: nowrap;
+    text-align: left;
+    border: none;
+    background: #dad4d8;
+    border-bottom: solid 1px #eee;
+  }
+
+  div.caption {
+    font-size: 10pt;
+    font-style: italic;
+    margin: 10px;
+    text-align:center;
+  }
+  div.figure {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  td.asterix {
+    color: #999;
+  }
+  th.asterix {
+    color: #666;
+  }
+</style>
+
+<h2>A Hidden Cost of Javascript</h2>
+
+<p>Any savvy web developer can tell you how many kilobytes their code consumes. They bundle, <a href="http://developer.yahoo.com/performance/rules.html#minify">minify</a>, <a href="http://developer.yahoo.com/performance/rules.html#gzip">compress</a> and tune the data sent out to within an inch of its life. Wire weight is easy to measure and has a direct impact on your application's launch time. But how many milliseconds does it take the user's computer to <i>parse and load</i> your code once it's arrived? What differences are there between CPUs, operating systems, browsers and plugins? What speed leaks are we overlooking?</p>
+
+<h3>Measuring Parse-n-Load</h3>
+
+<p>To find out I built a test harness that loads a given block of Javascript over and over and measures the setup time. I took the YU3 and YUI2 libraries, both minified and "raw". By themselves they don't "do" anything except register classes, functions and variables.</p>
+
+<p>The test is as simple as can be: record a start time, load the script, record the end time, and repeat over 1,000 iterations. The test were run on a recently-booted machine with no other programs running. The different blocking behavior on script tags was an interesting problem. Safari 4 (but not 3) will block if you create a script tag, even in a different frame. In Firefox 3 it's asynchronous. Firefox 3.5+ is asynchronous but works slightly differently, and you have to be careful not the blow the stack. Chrome is also asynchronous but has another different stack behavior. They also have very different memory allocation behavior, of which more below. You can <a href="http://github.com/aristus/parse-n-load">check out the project on GitHub</a> and play along at home.</p>
+
+
+<table class="chart" cellspacing="0">
+  <tr>
+  <th style="background:none;">&nbsp;</th>
+  <th>Chrome 4</th>
+  <th>Safari 4</th>
+  <th>Firefox 3</th>
+  <th>Firefox 3.5</th>
+  <th>Firefox 3.6</th>
+  <th class="asterix">Opera 10*</th>
+  <th class="asterix">Safari 3*</th>
+  </tr>
+
+  <tr>
+    <td class="v">YUI3 (raw, 1,355KB)</td>
+    <td>62</td>
+    <td>98</td>
+    <td>114</td>
+    <td>128</td>
+    <td>115</td>
+    <td class="asterix">112</td>
+    <td class="asterix">129</td>
+  </tr>
+  <tr>
+    <td class="v">YUI3 (minified, 311KB</td>
+    <td>31</td>
+    <td>47</td>
+    <td>78</td>
+    <td>94</td>
+    <td>83</td>
+    <td class="asterix">62</td>
+    <td class="asterix">111</td>
+  </tr>
+  <tr>
+    <td class="v">YUI2 (raw, 1,510KB)</td>
+    <td>23</td>
+    <td>153</td>
+    <td>131</td>
+    <td>142</td>
+    <td>137</td>
+    <td class="asterix">116</td>
+    <td class="asterix">150</td>
+  </tr>
+  <tr>
+    <td class="v">YUI2 (minified, 390KB)</td>
+    <td>11</td>
+    <td>110</td>
+    <td>77</td>
+    <td>105</td>
+    <td>102</td>
+    <td class="asterix">74</td>
+    <td class="asterix">125</td>
+  </tr>
+</table>
+<div class="caption">
+  <p>Table 0: Parse-and-load times in milliseconds for various Javascript libraries and browsers, 95th percentile mean. MacBook Pro 2.26 GHz Intel Core 2 Duo with 4GB of 1GHz DDR3 RAM.</p>
+  <p>* Incomplete test. See "Tragic Opera" below.</p>
+</div>
+
+<p>You can see there is a large difference between different browsers and libraries on the same hardware and OS. Firefox got slower by 10% or so after version 3.5. Also, it appears that minifcation helps load times as well as network transmission times.</p>
+
+<p>50-150 milliseconds may not sound like a big deal, but this is a top-of-the line 2009 computer. Users don't have the same expensive gear you do, and I think it's unwise to <a href="http://blogs.zdnet.com/hardware/?p=1498" rel="external nofollow">dismiss that too quickly</a>. There are about 50 million netbooks in the field today and that number is expected to jump into the hundreds of millions over the next few years.</p>
+
+<h3>Adventures Garbage Collecting</h3>
+
+<p>When I graphed the results from Safari 4 this is what I saw:</p>
+
+<div class="figure">
+  <img src="spiky-garbage.png" />
+  <div class="caption">Figure 0: the effects of GC halts</div>
+</div>
+
+
+<p>Interesting. Everything in this benchmark is local so that's not I/O wait. The regularity of huge spikes suggests that it's either the browser or the OS pausing to free up RAM with garbage collection. Here is the same graph with the top 5% of datapoints removed:</p>
+
+<div class="figure">
+  <img src="sawtooth.png" />
+  <div class="caption">Figure 1: 95th percentile graph of Javascript load times in Safari 4</div>
+</div>
+
+<p>It appears that the parse-n-load time of a given piece of Javascript in Safari 4 will increase linearly with the amount of garbage. The load time can grow as much as 3X longer than normal before GC kicks in. I'm not certain whether this is an artifact of the benchmark or if it actually happens a lot during real-world use. Other browsers exhibit similar halt-the-world GC behavior but not this sawtooth.</p>
+
+
+<h3>A Tragic Opera</h3>
+<p>The results for Opera 10 and Safari 3 have asterixes because I couldn't get them to run the complete test. Opera got steadily slower up to 250 iterations after which it started serious thrashing and had to be killed. If someone familiar with Opera can shed some light on what might be happening, please let me know.</p>
+<div class="figure">
+  <img src="oh-opera.png" />
+  <div class="caption">Figure 2: Opera choking on the parse-n-load benchmark</div>
+</div>
+
+<p>Safari 3 hit the wall even earlier, triggering an Out-of-Memory error after a couple hundred iterations.<p>
+
+<div class="figure">
+  <img src="safari-3-ram.png" />
+  <img src="safari-3.png" />
+  <div class="caption">Figure 3: Safari 3's memory leaks</div>
+</div>
+
+
+<h3>Try this at home</h3>
+
+<p>The <a href="http://github.com/aristus/parse-n-load">Parse-N-Load benchmark</a> is open source and free for use. It's early and I'm sure there are bugs. If you have other kinds of hardware (Netbooks! Windows! Linux!), please try it out and let me know what you find.</p>
