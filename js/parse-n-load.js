@@ -95,6 +95,10 @@ function time() {
     return (new Date()).getTime();
 }
 
+function match(s) {
+    return nav.indexOf(s) !== -1;
+}
+
 //for non-blocking browsers. careful not to blow the stack.
 function loadFile(i) {
     if (i<runs) {
@@ -113,7 +117,7 @@ function loadFile(i) {
 // browsecap crap.
 // blocking = (Safari 4 (but not Chrome)) or (Opera)
 var nav = navigator.userAgent;
-var blocking = (nav.indexOf('Safari') !== -1 && nav.indexOf('Chrome') === -1 && nav.indexOf('Version/4') !== -1) || nav.indexOf('Opera') !== -1;
+var blocking = (match('Safari') && !match('Chrome') && match('Version/4')) || match('Opera');
 
 function runTest() {
     data = new Array(runs);
@@ -125,8 +129,8 @@ function runTest() {
         return;
     }
 
-    // Safari blocks when writing script tags. Firefox does not.
-    // Chrome does not block, but the FF code path blows the
+    // Safari 4 blocks when writing script tags. Firefox does not.
+    // Chrome does not block, but the naive code path blows the
     // stack after just 20 iterations (ORLY? RLY.)
     // hence the window.setTimeout(fn, 0);
     if (blocking) {

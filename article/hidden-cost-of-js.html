@@ -84,11 +84,9 @@
 
 <p>Any savvy web developer can tell you how many kilobytes their code consumes. They bundle, <a href="http://developer.yahoo.com/performance/rules.html#minify">minify</a>, <a href="http://developer.yahoo.com/performance/rules.html#gzip">compress</a> and tune the data sent out to within an inch of its life. Wire weight is easy to measure and has a direct impact on your application's launch time. But how many milliseconds does it take the user's computer to <i>parse and load</i> your code once it's arrived? What differences are there between CPUs, operating systems, browsers and plugins? What speed leaks are we overlooking?</p>
 
-<h3>Measuring Parse-n-Load</h3>
+<p>To find out I built a test harness that loads a given block of Javascript over and over and measures the setup time. I took the Yahoo User Interface (<a href="http://developer.yahoo.com/yui/3">YUI</a>) libraries, both minified and "raw". By themselves these Javascript files don't do anything except register classes, functions and variables. The test is as simple as can be: record a start time, load the script, record the end time, and repeat over 1,000 iterations. The test were run on a recently-booted machine with no other programs running.</p>
 
-<p>To find out I built a test harness that loads a given block of Javascript over and over and measures the setup time. I took the YU3 and YUI2 libraries, both minified and "raw". By themselves they don't "do" anything except register classes, functions and variables.</p>
-
-<p>The test is as simple as can be: record a start time, load the script, record the end time, and repeat over 1,000 iterations. The test were run on a recently-booted machine with no other programs running. The different blocking behavior on script tags was an interesting problem. Safari 4 (but not 3) will block if you create a script tag, even in a different frame. In Firefox 3 it's asynchronous. Firefox 3.5+ is asynchronous but works slightly differently, and you have to be careful not the blow the stack. Chrome is also asynchronous but has another different stack behavior. They also have very different memory allocation behavior, of which more below. You can <a href="http://github.com/aristus/parse-n-load">check out the project on GitHub</a> and play along at home.</p>
+<p>The different blocking behavior on script tags was an interesting problem. In Safari 4 (but not 3) if you create a script tag that points to an external file, that action will wait until that file is completely parsed and loaded. This makes timing it very easy. In Firefox 3 it's asynchronous: the statement that creates the script element returns immediately and the file is loaded in a separate thread. Firefox 3.5+ is asynchronous but works slightly differently. Also you have to be careful not the blow the stack with too many nested function calls. Chrome is also asynchronous and has an altogether different stack behavior. Browsers also seem have very different memory allocation behavior, of which more below. You can <a href="http://github.com/aristus/parse-n-load">check out the project on GitHub</a> and play along at home.</p>
 
 
 <table class="chart" cellspacing="0">
@@ -153,7 +151,7 @@
 
 <p>50-150 milliseconds may not sound like a big deal, but this is a top-of-the line 2009 computer. Users don't have the same expensive gear you do, and I think it's unwise to <a href="http://blogs.zdnet.com/hardware/?p=1498" rel="external nofollow">dismiss that too quickly</a>. There are about 50 million netbooks in the field today and that number is expected to jump into the hundreds of millions over the next few years.</p>
 
-<h3>Adventures Garbage Collecting</h3>
+<h3>Adventures in Garbage Collecting</h3>
 
 <p>When I graphed the results from Safari 4 this is what I saw:</p>
 
