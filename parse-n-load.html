@@ -25,6 +25,26 @@
         font-size: smaller;
         margin-bottom: 10px;
       }
+      body {
+        width: 650px;
+      }
+
+      #y-axis {
+        -webkit-transform: rotate(-90deg);
+        -moz-transform: rotate(-90deg);
+        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+        transform: rotate(-90deg);
+        position:absolute;
+        left: 0;
+        top:56px;
+        font-size: 10pt;
+        color: #666;
+      }
+
+      #flot {
+        position:relative;
+        left: 60px;
+      }
     </style>
     <script src="js/yui2.js"></script>
     <script src="js/yui.flot.js"></script>
@@ -39,7 +59,16 @@
     </p>
 
     <fieldset>
-      File Path: <input type="text" size="40" id="js-file" value="test-data/yui3-raw.js" />
+      File:
+      <select id="js-file">
+        <option value="github.js">Github application (211KB, minified)</option>
+        <option value="yui3-raw.js">YUI3 (1,355KB, raw)</option>
+        <option value="yui3-min.js">YUI3 (311KB, minified)</option>
+        <option value="yui2-raw.js">YUI2 (1,510KB, raw)</option>
+        <option value="yui2-min.js"> (390KB, minified)</option>
+<!--         <option value=".js"> (KB, )</option> -->
+<!--         <option value=".js"> (KB, )</option> -->
+      </select>
       &nbsp;&nbsp;
       Runs: <input type="text" size="4" id="num-runs" value="10" />
       &nbsp;&nbsp;
@@ -49,10 +78,14 @@
     </fieldset>
 
     <div id="progress"></div>
-    <div id="flot"></div>
 
+    <div style="position:relative;">
+      <div id="flot"></div>
+      <div id="y-axis">Milliseconds</div>
+    </div>
     <iframe name="js" src="blank.html" style="display:none;" id="js" ></iframe>
 
     <p><b>Why 95th Percentile?</b> If you tun it off you'll probably see tall, regular spikes that dwarf the rest of the measurements. These are caused by the browser pausing to do garbage collection. It's good to remember GC halts but they can get in the way of informative graphs.</p>
   </body>
+
 </html>

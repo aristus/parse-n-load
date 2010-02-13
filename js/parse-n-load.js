@@ -121,7 +121,7 @@ var blocking = (match('Safari') && !match('Chrome') && match('Version/4')) || ma
 
 function runTest() {
     data = new Array(runs);
-    file = YAHOO.util.Dom.get('js-file').value;
+    file = 'test-data/'+YAHOO.util.Dom.get('js-file').value;
     runs = parseInt(YAHOO.util.Dom.get('num-runs').value||'3');
     if (!file) {
         alert('Please choose a filename');

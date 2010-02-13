@@ -4,7 +4,7 @@
   }
 
   body {
-    width: 700px;
+    width: 800px;
     margin: 15px;
   }
 
@@ -38,25 +38,27 @@
     border-top: solid 1px #ddd;
     border-left: solid 1px #ddd;
     margin:0;
-    font-size: 10pt;
+    font-size: 12pt;
     padding: 8px;
     vertical-align: center;
     text-align: center;
-    height: 3em;
+    height: 60px;
+    width: 80px;
   }
 
   table.chart th {
     padding: 8px 10px;
     background: #dad4d8;
     border-right: solid 1px #eee;
-    font-weight: normal;
+    font-weight: bold;
     font-size: 10pt;
   }
 
   table.chart td.v {
     white-space: nowrap;
-    text-align: left;
+    text-align: center;
     border: none;
+    font-size: 10pt;
     background: #dad4d8;
     border-bottom: solid 1px #eee;
   }
@@ -78,20 +80,41 @@
   th.asterix {
     color: #666;
   }
+
+
+  div.bar {
+    height: 4px;
+    background:#aaa;
+    position:relative;
+    top: 16px;
+    left: -4px;
+    display:none; /* not sure if the embedded bar chart is useful */
+  }
+  td.asterix div.bar {
+    background-color: #bbb;
+  }
+
+  div.aside {
+    font-size: 8pt;
+  }
 </style>
 
 <h2>A Hidden Cost of Javascript</h2>
 
 <p>Any savvy web developer can tell you how many kilobytes their code consumes. They bundle, <a href="http://developer.yahoo.com/performance/rules.html#minify">minify</a>, <a href="http://developer.yahoo.com/performance/rules.html#gzip">compress</a> and tune the data sent out to within an inch of its life. Wire weight is easy to measure and has a direct impact on your application's launch time. But how many milliseconds does it take the user's computer to <i>parse and load</i> your code once it's arrived? What differences are there between CPUs, operating systems, browsers and plugins? What speed leaks are we overlooking?</p>
 
-<p>To find out I built a test harness that loads a given block of Javascript over and over and measures the setup time. I took the Yahoo User Interface (<a href="http://developer.yahoo.com/yui/3">YUI</a>) libraries, both minified and "raw". By themselves these Javascript files don't do anything except register classes, functions and variables. The test is as simple as can be: record a start time, load the script, record the end time, and repeat over 1,000 iterations. The test were run on a recently-booted machine with no other programs running.</p>
+<p>To find out I built a test harness that loads a given block of Javascript over and over and measures the setup time. My test subjects were the Yahoo User Interface (<a href="http://developer.yahoo.com/yui/3">YUI</a>) libraries, Scriptaculous, jQueryUI, and 280North's Cappuccino framework. By themselves these Javascript files don't do anything except register classes, functions and variables. I've also included the main Javascript application code from popular applications like GitHub and Yahoo Mail. In the case of application code I carefully neutered them to not do initialization or throw errors.</p>
 
-<p>The different blocking behavior on script tags was an interesting problem. In Safari 4 (but not 3) if you create a script tag that points to an external file, that action will wait until that file is completely parsed and loaded. This makes timing it very easy. In Firefox 3 it's asynchronous: the statement that creates the script element returns immediately and the file is loaded in a separate thread. Firefox 3.5+ is asynchronous but works slightly differently. Also you have to be careful not the blow the stack with too many nested function calls. Chrome is also asynchronous and has an altogether different stack behavior. Browsers also seem have very different memory allocation behavior, of which more below. You can <a href="http://github.com/aristus/parse-n-load">check out the project on GitHub</a> and play along at home.</p>
 
+<p>The test is as simple as can be: record a start time, load the script, record the end time, and repeat over 1,000 iterations. The test were run on a recently-booted machine with no other programs running. You can <a href="http://github.com/aristus/parse-n-load">check out the project on GitHub</a> and play along at home.</p>
+
+
+
+<h3>The Results</h3><br/>
 
 <table class="chart" cellspacing="0">
   <tr>
-  <th style="background:none;">&nbsp;</th>
+  <th style="background:none"><b>MacBook Pro 2.26GHz</b></th>
   <th>Chrome 4</th>
   <th>Safari 4</th>
   <th>Firefox 3</th>
@@ -102,58 +125,87 @@
   </tr>
 
   <tr>
-    <td class="v">YUI3 (raw, 1,355KB)</td>
-    <td>62</td>
-    <td>98</td>
-    <td>114</td>
-    <td>128</td>
-    <td>115</td>
-    <td class="asterix">112</td>
-    <td class="asterix">129</td>
+    <td class="v"><b>YUI3</b> <div class="aside">raw, 1,355KB</div></td>
+    <td>62 <div class="bar" style="width:31px"></div></td>
+    <td>98 <div class="bar" style="width:46px"></td>
+    <td>114 <div class="bar" style="width:57px"></td>
+    <td>128 <div class="bar" style="width:64px"></td>
+    <td>115 <div class="bar" style="width:57px"></td>
+    <td class="asterix">112 <div class="bar" style="width:56px"></td>
+    <td class="asterix">129 <div class="bar" style="width:64px"></td>
   </tr>
   <tr>
-    <td class="v">YUI3 (minified, 311KB</td>
-    <td>31</td>
-    <td>47</td>
-    <td>78</td>
-    <td>94</td>
-    <td>83</td>
-    <td class="asterix">62</td>
-    <td class="asterix">111</td>
+    <td class="v"><b>YUI3</b> <div class="aside">minified, 311KB</div></td>
+    <td>31 <div class="bar" style="width:15px"></td>
+    <td>47 <div class="bar" style="width:23px"></td>
+    <td>78 <div class="bar" style="width:36px"></td>
+    <td>94 <div class="bar" style="width:47px"></td>
+    <td>83 <div class="bar" style="width:41px"></td>
+    <td class="asterix">62 <div class="bar" style="width:31px"></td>
+    <td class="asterix">111 <div class="bar" style="width:55px"></td>
   </tr>
   <tr>
-    <td class="v">YUI2 (raw, 1,510KB)</td>
-    <td>23</td>
-    <td>153</td>
-    <td>131</td>
-    <td>142</td>
-    <td>137</td>
-    <td class="asterix">116</td>
-    <td class="asterix">150</td>
+    <td class="v"><b>YUI2</b> <div class="aside">raw, 1,510KB</div></td>
+    <td>23 <div class="bar" style="width:12px"></td>
+    <td>153 <div class="bar" style="width:75px"></td>
+    <td>131 <div class="bar" style="width:65px"></td>
+    <td>142 <div class="bar" style="width:71px"></td>
+    <td>137 <div class="bar" style="width:68px"></td>
+    <td class="asterix">116 <div class="bar" style="width:58px"></td>
+    <td class="asterix">150 <div class="bar" style="width:75px"></td>
   </tr>
   <tr>
-    <td class="v">YUI2 (minified, 390KB)</td>
-    <td>11</td>
-    <td>110</td>
-    <td>77</td>
-    <td>105</td>
-    <td>102</td>
-    <td class="asterix">74</td>
-    <td class="asterix">125</td>
+    <td class="v"><b>YUI2</b> <div class="aside">minified, 390KB</div></td>
+    <td>11  <div class="bar" style="width:6px"></td>
+    <td>110 <div class="bar" style="width:55px"></td>
+    <td>77 <div class="bar" style="width:37px"></td>
+    <td>105 <div class="bar" style="width:53px"></td>
+    <td>102 <div class="bar" style="width:51px"></td>
+    <td class="asterix">74 <div class="bar" style="width:37px"></td>
+    <td class="asterix">125 <div class="bar" style="width:62px"></td>
+  </tr>
+
+  <tr>
+    <td class="v"><b>Scriptaculous</b><div class="aside">raw, 265KB</div></td>
+    <td>4  <div class="bar" style="width:2"></td>
+    <td>63 <div class="bar" style="width:32px"></td>
+    <td>67 <div class="bar" style="width:34px"></td>
+    <td>80 <div class="bar" style="width:40px"></td>
+    <td>66 <div class="bar" style="width:33px"></td>
+    <td class="asterix"> <div class="bar" style="width:0px"></td>
+    <td class="asterix"> <div class="bar" style="width:0px"></td>
+  </tr>
+
+
+  <tr>
+    <td class="v"><b>GitHub</b><div class="aside">minified, 211KB</div></td>
+    <td>4  <div class="bar" style="width:2"></td>
+    <td>63 <div class="bar" style="width:32px"></td>
+    <td>67 <div class="bar" style="width:34px"></td>
+    <td>80 <div class="bar" style="width:40px"></td>
+    <td>66 <div class="bar" style="width:33px"></td>
+    <td class="asterix"> <div class="bar" style="width:0px"></td>
+    <td class="asterix"> <div class="bar" style="width:0px"></td>
   </tr>
 </table>
 <div class="caption">
   <p>Table 0: Parse-and-load times in milliseconds for various Javascript libraries and browsers, 95th percentile mean. MacBook Pro 2.26 GHz Intel Core 2 Duo with 4GB of 1GHz DDR3 RAM.</p>
-  <p>* Incomplete test. See "Tragic Opera" below.</p>
+  <p>* Incomplete test, only 100 iterations. See "Tragic Opera" below.</p>
 </div>
 
-<p>You can see there is a large difference between different browsers and libraries on the same hardware and OS. Firefox got slower by 10% or so after version 3.5. Also, it appears that minifcation helps load times as well as network transmission times.</p>
+<p>You can see there is a large difference between different browsers and libraries on the same hardware and OS. Firefox 3.5 is slower by 10% or so. 3.6 is an improvement but still a bit slower than 3.0. It appears that minifcation helps load times as well as network transmission times. Google Chrome dominates the field. As far as I can tell it isn't doing memoization tricks; it really is an order of magnitude faster at parse-n-load.</p>
+
+<p>Comparing the speed of libraries in the same browser is trickier because they may not have all of the same features. As of this writing YUI2 is much more complete than YUI3, and I only included a few widgets like DataTable and TreeView to create a slug of Javascript of a comparable size.</p>
 
 <p>50-150 milliseconds may not sound like a big deal, but this is a top-of-the line 2009 computer. Users don't have the same expensive gear you do, and I think it's unwise to <a href="http://blogs.zdnet.com/hardware/?p=1498" rel="external nofollow">dismiss that too quickly</a>. There are about 50 million netbooks in the field today and that number is expected to jump into the hundreds of millions over the next few years.</p>
 
+
+<h3>Debugging the Benchmark</h3>
+<p>The first problem that came up was different blocking behavior between browsers. In Safari 4 (but not 3) if you create a script tag that points to an external file, that action will block, ie, wait until that file is completely parsed and loaded. This makes timing it very easy. In Firefox, however, this action asynchronous: the statement that creates the script element returns immediately and the file is loaded in a separate thread. This means you have to set up a callback in the separate thread to both measure elapsed time and kick off the next iteration of the test. You also have to be <a href="http://paulbarry.com/articles/2009/08/30/tail-call-optimization">careful not the blow the stack</a> with too many nested function calls. Chrome is also asynchronous and has an altogether different stack behavior. If all that wasn't enough, browsers have very different memory allocation behavior, of which more (oh, much more) below.</p>
+
 <h3>Adventures in Garbage Collecting</h3>
 
-<p>When I graphed the results from Safari 4 this is what I saw:</p>
+<p>Every browser seems to have a different system for allocating memory while parsing Javascript code. When you graph the results from Safari 4 this is what you will see:</p>
 
 <div class="figure">
   <img src="spiky-garbage.png" />
@@ -161,21 +213,28 @@
 </div>
 
 
-<p>Interesting. Everything in this benchmark is local so that's not I/O wait. The regularity of huge spikes suggests that it's either the browser or the OS pausing to free up RAM with garbage collection. Here is the same graph with the top 5% of datapoints removed:</p>
+<p>Interesting. All of the source files in the benchmark are local so that's not I/O wait. The regularity of huge spikes suggests that the browser is pausing every so often to free up memory via garbage collection. When you remove those spikes another interesting patterns shows up. Here is the same graph with the top 5% of datapoints removed:</p>
 
 <div class="figure">
   <img src="sawtooth.png" />
   <div class="caption">Figure 1: 95th percentile graph of Javascript load times in Safari 4</div>
 </div>
 
-<p>It appears that the parse-n-load time of a given piece of Javascript in Safari 4 will increase linearly with the amount of garbage. The load time can grow as much as 3X longer than normal before GC kicks in. I'm not certain whether this is an artifact of the benchmark or if it actually happens a lot during real-world use. Other browsers exhibit similar halt-the-world GC behavior but not this sawtooth.</p>
+<p>It appears that the parse-n-load time of a given piece of Javascript in Safari 4 will increase linearly with the amount of garbage. The load time can grow as much as 3X longer than normal before GC kicks in. I'm not certain whether this is an artifact of the benchmark or if it actually happens a lot during real-world use. Other browsers exhibit similar halt-the-world GC behavior but not this sawtooth. Firefox's graph stays fairly horizontal but has many more small spikes:</p>
+
+
+<div class="figure">
+  <img src="firefox-35.png" />
+  <div class="caption">Figure 2: 95th percentile graph of Javascript load times in Firefox 3.5</div>
+</div>
+
 
 
 <h3>A Tragic Opera</h3>
 <p>The results for Opera 10 and Safari 3 have asterixes because I couldn't get them to run the complete test. Opera got steadily slower up to 250 iterations after which it started serious thrashing and had to be killed. If someone familiar with Opera can shed some light on what might be happening, please let me know.</p>
 <div class="figure">
   <img src="oh-opera.png" />
-  <div class="caption">Figure 2: Opera choking on the parse-n-load benchmark</div>
+  <div class="caption">Figure 3: Opera choking on the parse-n-load benchmark</div>
 </div>
 
 <p>Safari 3 hit the wall even earlier, triggering an Out-of-Memory error after a couple hundred iterations.<p>
@@ -183,7 +242,7 @@
 <div class="figure">
   <img src="safari-3-ram.png" />
   <img src="safari-3.png" />
-  <div class="caption">Figure 3: Safari 3's memory leaks</div>
+  <div class="caption">Figure 4: Safari 3's memory leaks</div>
 </div>
 
 
