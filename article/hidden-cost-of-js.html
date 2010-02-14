@@ -169,7 +169,7 @@
   </tr>
 
   <tr>
-    <td class="v"><b>Scriptaculous</b><div class="aside">raw, 265KB</div></td>
+    <td class="v"><b>Scriptaculous</b><div class="aside">minified, 159KB</div></td>
     <td> </td>
     <td></td>
     <td></td>
@@ -196,9 +196,14 @@
   <p>* Incomplete test, only 100 iterations. See "Tragic Opera" below.</p>
 </div>
 
-<p>You can see there is a large difference between different browsers and libraries on the same hardware and OS. Firefox 3.5 is slower than 3.0 by 10% or so, but 3.6 is on par. Google Chrome dominates the field. As far as I can tell it isn't doing memoization tricks; it really is an order of magnitude faster at parse-n-load.</p>
+<p>You can see there are some large differences between different browsers and libraries on the same hardware and OS. While Google Chrome appears to be an order of magnitude faster at parse-n-load I think the truth is a little more complex. On slower machines this benchmark often produces sharp cliffs. That might be the V8 engine's <a href="http://en.wikipedia.org/wiki/Inline_caching">inline caching</a> kicking in after so many iterations:</p>
 
-<p>Comparing the speed of libraries in the same browser is trickier because they may not have all of the same features. As of this writing YUI2 is much more complete than YUI3, and I only included a few widgets like DataTable and TreeView to create a slug of Javascript of a comparable size.</p>
+<div class="figure">
+  <img src="chrome-cliff.png" />
+  <div class="caption">Figure 0: Chrome's V8 parser has two speeds: fast and <b>very</b> fast. MacBook Air 1.6GHz</div>
+</div>
+
+<p>Comparing the speed of different libraries in the same browser is trickier because they all have a different feature set. As of this writing YUI2 is much more complete than YUI3, and I only included a few widgets like DataTable and TreeView to create a slug of Javascript of a comparable size.</p>
 
 <p>50-150 milliseconds may not sound like a big deal, but this is a top-of-the line 2009 computer. Users don't have the same expensive gear you do, and parse-n-load time pretty much comes down to the speed of the CPU. There are about 50 million netbooks in the field today and that number is expected to jump into the hundreds of millions over the next few years.</p>
 
@@ -209,59 +214,58 @@
   <th>Chrome <div class="aside">5.0.307.7</div></th>
   <th>Safari 4 <div class="aside">4.0.2</div></th>
   <th>Firefox 3 <div class="aside">3.0.12</div></th>
-  <th>Firefox 3.5 <div class="aside">3.5.3</div></th>
+  <th>Firefox 3.5 <div class="aside">3.5.2</div></th>
   <th>Firefox 3.6 <div class="aside">3.6</div></th>
   </tr>
 
   <tr>
     <td class="v"><b>YUI3</b> <div class="aside">raw, 1,355KB</div></td>
-    <td></td>
-    <td></td>
+    <td>19</td>
+    <td>92</td>
     <td>219</td>
-    <td></td>
+    <td>234</td>
     <td></td>
   </tr>
   <tr>
     <td class="v"><b>YUI3</b> <div class="aside">minified, 311KB</div></td>
-    <td></td>
-    <td></td>
+    <td>8</td>
+    <td>72</td>
     <td>178</td>
-    <td></td>
+    <td>170</td>
     <td></td>
   </tr>
   <tr>
     <td class="v"><b>YUI2</b> <div class="aside">raw, 1,510KB</div></td>
-    <td></td>
-    <td></td>
+    <td>24</td>
+    <td>251</td>
     <td>301</td>
-    <td></td>
+    <td>268</td>
     <td></td>
   </tr>
   <tr>
     <td class="v"><b>YUI2</b> <div class="aside">minified, 390KB</div></td>
-    <td></td>
-    <td></td>
+    <td>15</td>
+    <td>182</td>
     <td>176</td>
-    <td></td>
+    <td>190</td>
     <td></td>
   </tr>
 
   <tr>
-    <td class="v"><b>Scriptaculous</b><div class="aside">raw, 265KB</div></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td class="v"><b>Scriptaculous</b><div class="aside">minified, 159KB</div></td>
+    <td>10</td>
+    <td>56</td>
+    <td>97</td>
+    <td>163</td>
     <td></td>
   </tr>
-
 
   <tr>
     <td class="v"><b>GitHub</b><div class="aside">minified, 211KB</div></td>
-    <td></td>
-    <td></td>
+    <td>5</td>
+    <td>77</td>
     <td>131</td>
-    <td></td>
+    <td>130</td>
     <td></td>
   </tr>
 </table>
@@ -269,7 +273,7 @@
   <p>Table 1: Parse-and-load, 95th percentile mean. MacBook Air 1.6 GHz Intel Core 2 Duo with 2GB of 1GHz DDR2 RAM.</p>
 </div>
 
-
+<p>NB: I would take this table with a grain of salt. The machine is a refurbished 1st generation Air with overheating problems. On the other hand, that's just the kind of crap users have to deal with. [todo: reconfirm the scriptaculous ff3 numbers.]</p>
 
 
 <h3>Debugging the Benchmark</h3>
