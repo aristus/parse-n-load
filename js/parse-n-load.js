@@ -88,6 +88,7 @@ function flotPlot(data) {
                       {color:2,
                        lines:{show:true}
                       });
+    YAHOO.util.Dom.get('browser-icon').src = 'img/icon-'+icon+'.png';
 }
 
 
@@ -119,6 +120,19 @@ function loadFile(i) {
 var nav = navigator.userAgent;
 var blocking = (match('Safari') && !match('Chrome') && match('Version/4')) || match('Opera');
 
+var icon = '';
+if (match('Safari')) {
+    icon = 'safari';
+    if (match('Chrome')) {
+        icon = 'chrome';
+    }
+} else if (match('Firefox')) {
+    icon = 'firefox';
+} else if (match('Opera')) {
+    icon = 'opera';
+} else if (match('MSIE')) {
+    icon = 'ie';
+}
 
 function runTest() {
     data = new Array(runs);

@@ -45,6 +45,12 @@
         position:relative;
         left: 60px;
       }
+
+      #browser-icon {
+        position: absolute;
+        right: -30px;
+        bottom: 0px;
+      }
     </style>
     <script src="js/yui2.js"></script>
     <script src="js/yui.flot.js"></script>
@@ -66,7 +72,8 @@
         <option value="yui3-min.js">YUI3 (311KB, minified)</option>
         <option value="yui2-raw.js">YUI2 (1,510KB, raw)</option>
         <option value="yui2-min.js">YUI2 (390KB, minified)</option>
-        <option value="scriptaculous-raw.js">Scriptaculous (265KB, raw)</option>
+        <option value="jquery-ui-1.7.2-min.js">jQueryUI 1.7.2 (379KB, minified)</option>
+<!--         <option value="scriptaculous-raw.js">Scriptaculous (265KB, raw)</option> -->
         <option value="scriptaculous-min.js">Scriptaculous (159KB, minified)</option>
 <!--         <option value=".js"> (KB, )</option> -->
 <!--         <option value=".js"> (KB, )</option> -->
@@ -83,7 +90,7 @@
 
     <div style="position:relative;">
       <div id="flot"></div>
-      <div id="y-axis">Milliseconds</div>
+      <img src="" id="browser-icon" />
     </div>
     <iframe name="js" src="blank.html" style="display:none;" id="js" ></iframe>
 
