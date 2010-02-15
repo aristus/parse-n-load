@@ -119,6 +119,7 @@ function loadFile(i) {
 var nav = navigator.userAgent;
 var blocking = (match('Safari') && !match('Chrome') && match('Version/4')) || match('Opera');
 
+
 function runTest() {
     data = new Array(runs);
     file = 'test-data/'+YAHOO.util.Dom.get('js-file').value;
@@ -135,7 +136,7 @@ function runTest() {
     // hence the window.setTimeout(fn, 0);
     if (blocking) {
         for (var i=0; i<runs; i++) {
-            doc.close();
+            doc.open();
             var start = time();
             doc.write('<script id="test" src="'+file+'"></script>');
             doc.write('<script>var e=document.getElementById("test"); e.parentNode.removeChild(e);</script>');
