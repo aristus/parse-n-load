@@ -61,14 +61,14 @@ function le(lst, lim) {
 }
 
 function nonzero(lst) {
-    return filter(function(a){return a[1]<=0;}, lst);
+    return filter(function(a){return a[1]>0;}, lst);
 }
 
 function nthPercentile(lst, n) {
     var a = lst.slice();
     a.sort(function(x,y){return x[1]-y[1];});
     var lim = a[Math.floor(a.length * n)][1];
-    return le(lst, lim);
+    return nonzero(le(lst, lim));
 }
 
 function flotPlot(data) {

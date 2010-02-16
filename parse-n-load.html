@@ -28,27 +28,9 @@
       body {
         width: 650px;
       }
-
-      #y-axis {
-        -webkit-transform: rotate(-90deg);
-        -moz-transform: rotate(-90deg);
-        filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
-        transform: rotate(-90deg);
-        position:absolute;
-        left: 0;
-        top:56px;
-        font-size: 10pt;
-        color: #666;
-      }
-
-      #flot {
-        position:relative;
-        left: 60px;
-      }
-
       #browser-icon {
         position: absolute;
-        right: -30px;
+        right: 30px;
         bottom: 0px;
       }
     </style>
@@ -61,25 +43,23 @@
   <body>
     <h2>Parse-n-Load Javascript Test Harness</h2>
     <p>
-      Enter the path of a <b>local</b> Javascript file, choose the number of test runs, then click "Run Test".
+      Choose a Javascript file, choose the number of test runs, then click "Run Test".
     </p>
 
     <fieldset>
       File:
       <select id="js-file">
-        <option value="github.js">Github application (211KB, minified)</option>
         <option value="yui3-raw.js">YUI3 (1,355KB, raw)</option>
         <option value="yui3-min.js">YUI3 (311KB, minified)</option>
         <option value="yui2-raw.js">YUI2 (1,510KB, raw)</option>
         <option value="yui2-min.js">YUI2 (390KB, minified)</option>
         <option value="jquery-ui-1.7.2-min.js">jQueryUI 1.7.2 (379KB, minified)</option>
-<!--         <option value="scriptaculous-raw.js">Scriptaculous (265KB, raw)</option> -->
+        <option value="scriptaculous-raw.js">Scriptaculous (265KB, raw)</option>
         <option value="scriptaculous-min.js">Scriptaculous (159KB, minified)</option>
-<!--         <option value=".js"> (KB, )</option> -->
-<!--         <option value=".js"> (KB, )</option> -->
+        <option value="github.js">Github application (211KB, minified)</option>
       </select>
       &nbsp;&nbsp;
-      Runs: <input type="text" size="4" id="num-runs" value="10" />
+      Runs: <input type="text" size="4" maxlength="4" id="num-runs" value="10" />
       &nbsp;&nbsp;
       <small><input type="checkbox" id="ignore-spikes" checked="checked" /> 95th percentile</small>
       &nbsp;&nbsp;
