@@ -38,7 +38,6 @@
     border-left: solid 1px #ddd;
     margin:0;
     font-size: 10pt;
-    padding: 4px;
     vertical-align: center;
     text-align: center;
     height: 40px;
@@ -81,13 +80,15 @@
   }
 
 
-  div.bar {
-    height: 4px;
-    background:#aaa;
+  div.td-container {
     position:relative;
-    top: 16px;
-    left: -4px;
-    display:none; /* not sure if the embedded bar chart is useful */
+  }
+  div.bar {
+    height: 40px;
+    background:#aaa;
+    position: absolute;
+    top: 0px;
+    left: 0px;
   }
   td.asterix div.bar {
     background-color: #bbb;
@@ -105,7 +106,6 @@
 
 <p>Any savvy web developer can tell you how many kilobytes their code consumes. They bundle, <a href="http://developer.yahoo.com/performance/rules.html#minify">minify</a>, <a href="http://developer.yahoo.com/performance/rules.html#gzip">compress</a> and tune the data sent out to within an inch of its life. Wire weight is easy to measure and has a direct impact on your application's launch time. But how many milliseconds does it take the user's computer to <i>parse and load</i> your code once it's arrived? What differences are there between CPUs, operating systems, browsers and plugins? What speed leaks are we overlooking?</p>
 
-<h3>Performance is Feature 0</h3>
 <p>As you look at the data below, keep in mind four things:</p>
 <ol>
 <li>Your code is not the only code running on the user's computer</li>
@@ -114,11 +114,11 @@
 <li>The average CPU is getting slower</li>
 </ol>
 
-<p>Even if you look at just sexy new hardware it's hard to ignore low-power clients: there are about 50 million netbooks and 43 million iPhones out there, alongside 10-15 million Android devices. Almost all of them are in the 600-1,600 MHz range and have less than 512MB of RAM. A juicy, growing slice of the market wants to use your software on the equivalent of a desktop from 1998. This includes rich Westerners as well as law students in Argentina who prefer small and cheap computers because of exchange rates and import tariffs. If your software runs slower than your competitor's, you lose.</p>
+<p>Even if you look at just sexy new hardware it's hard to ignore low-power clients: there are about 50 million netbooks and 43 million iPhones out there, alongside 10-15 million Android devices. Almost all of them are in the 600-1,600 MHz range and have less than 512MB of RAM. A juicy, growing slice of the market wants to use your software on the equivalent of a desktop from 1998. This includes rich Westerners as well as people in the fastest-growing international markets.</p>
 
 <h3>The Test</h3>
 
-<p>The test harness loads a given block of Javascript from a local file over and over and measures the setup time. My test subjects were the Yahoo User Interface (<a href="http://developer.yahoo.com/yui/3">YUI</a>) libraries, Scriptaculous, jQueryUI, and 280North's Cappuccino framework. By themselves these Javascript files don't do anything except register classes, functions and variables. I've also included the main Javascript application code from popular applications like GitHub and Yahoo Mail.</p>
+<p>The test harness loads a given block of Javascript from a local file over and over and measures the setup time. My test subjects were the Yahoo User Interface (<a href="http://developer.yahoo.com/yui/3">YUI</a>) libraries, Scriptaculous, and jQueryUI. By themselves these Javascript files don't do anything except register classes, functions and variables. I've also included the main Javascript application code from GitHub.com.</p>
 
 <p>The test is as simple as can be: record a start time, load the script, record the end time, and repeat over 1,000 iterations. The tests were run on recently-booted machines with no other programs running. You can <a href="http://github.com/aristus/parse-n-load">check out the project on GitHub</a> and play along at home.</p>
 
@@ -380,27 +380,27 @@
   <p>Table 1: Parse-and-load, 95th percentile mean. MacBook Air 1.6 GHz Intel Core 2 Duo with 2GB of 1GHz DDR2 RAM.</p>
 </div>
 
-<p>There is a large spread between different browsers on the same hardware and OS. Firefox 3.5 is a few points slower than 3.0, but 3.6 improved on that. As expected, minification helps parse-n-load in addition to network transmission time. I didn't include standard deviations because aside from some pathological cases they were small. If you run the benchmark for yourself you will get mean average, stddev, and a time series graph for your enjoyment.</p>
+<p>There is a noticeable spread between different browsers on the same hardware and OS. Firefox 3.5 is a few points slower than 3.0, but 3.6 improved on that. As expected, minification helps parse-n-load in addition to network transmission time. I didn't include standard deviations because aside from some pathological cases they were small. If you run the benchmark for yourself you will get mean average, stddev, and a time series graph for your enjoyment.</p>
 
+<h3>OMGWTFYUI</h3>
+<p>Comparing the parse-n-load of different libraries is tricky because they all have different feature sets. For example, as of this writing YUI2 is much more complete than YUI3, and I only included a few widgets like DataTable and TreeView to create a slug of Javascript of a comparable size. It's probable that the way these libraries are written affects setup times but it's too early to tell exactly what's going on. From there you get into a more complicated question about what benefits each library buys you. I would not base the choice of library on a this benchmark.</p>
+
+
+<h3>Debugging the Benchmark</h3>
+<p>The first problem that came up was different blocking behavior between browsers. In Safari 4 (but not 3) if you create a script tag that points to an external file, that action will block, ie, wait until that file is completely parsed and loaded. This makes timing it very easy. In Firefox, however, this action asynchronous: the statement that creates the script element returns immediately and the file is loaded in a separate thread. This means you have to set up a callback in the separate thread to both measure elapsed time and kick off the next iteration of the test. You have to be <a href="http://paulbarry.com/articles/2009/08/30/tail-call-optimization">careful not the blow the stack</a> with too many nested function calls. Google Chrome is also asynchronous and has an altogether different stack behavior. If all that wasn't enough, browsers have very different memory allocation behavior, of which more (oh, much more) below.</p>
 
 <h3>The Curious Case of Chrome</h3>
-<p>While Google Chrome appears to be an order of magnitude faster at parse-n-load the truth may be a little more complex. On my MacBook Air this benchmark often produces sharp cliffs. That might be the V8 engine's <a href="http://en.wikipedia.org/wiki/Inline_caching">inline caching</a> kicking in. Or perhaps the CPU leaves low-power mode in response to demand. Given that none of the other browsers on this machine have the same cliff, though, it would have to mean that their bottleneck is something other than raw MIPS. I'm leaning towards the inlining theory but if someone more knowledgeable can speak up, please do.</p>
+<p>While Google Chrome appears to be an order of magnitude faster at parse-n-load, the truth may be a little more complex. On my MacBook Air this benchmark often produces sharp cliffs. That might be the V8 engine's <a href="http://en.wikipedia.org/wiki/Inline_caching">inline caching</a> kicking in. I also suspect it could be caching the machine code it compiles on the first pass. Or this could be something silly like the CPU coming out of low-power mode. If anyone who knows more about what's going on can speak up, please do.</p>
 
 <div class="figure">
   <img src="chrome-cliff.png" />
   <div class="caption">Figure 0: On a Macbook Air, Chrome's V8 Javascript engine has two speeds: fast and <b>very</b> fast.</div>
 </div>
 
-<h3>OMGWTFYUI</h3>
-<p>Comparing the parse-n-load of different libraries is trickier because they all have different feature sets. For example, as of this writing YUI2 is much more complete than YUI3, and I only included a few widgets like DataTable and TreeView to create a slug of Javascript of a comparable size. It's probable that the way these libraries are written affects setup times but it's too early to tell exactly what's going on. From there you get into a more complicated question about what benefits each library buys you. I would not base the choice of library on a this benchmark.</p>
-
-
-<h3>Debugging the Benchmark</h3>
-<p>The first problem that came up was different blocking behavior between browsers. In Safari 4 (but not 3) if you create a script tag that points to an external file, that action will block, ie, wait until that file is completely parsed and loaded. This makes timing it very easy. In Firefox, however, this action asynchronous: the statement that creates the script element returns immediately and the file is loaded in a separate thread. This means you have to set up a callback in the separate thread to both measure elapsed time and kick off the next iteration of the test. You have to be <a href="http://paulbarry.com/articles/2009/08/30/tail-call-optimization">careful not the blow the stack</a> with too many nested function calls. Chrome is also asynchronous and has an altogether different stack behavior. If all that wasn't enough, browsers have very different memory allocation behavior, of which more (oh, much more) below.</p>
 
 <h3>Adventures in Garbage Collecting</h3>
 
-<p>Every browser seems to have a different system for allocating memory while parsing Javascript code. When you graph the results from Safari 4 this is what you will see:</p>
+<p>Every browser seems to have a different system for allocating memory while parsing Javascript code. When you graph the results from Safari 4 this is what I saw initially:</p>
 
 <div class="figure">
   <img src="spiky-garbage.png" />
@@ -415,7 +415,7 @@
   <div class="caption">Figure 2: 95th percentile graph of Javascript load times in Safari 4</div>
 </div>
 
-<p>It appears that the parse-n-load time of a given piece of Javascript in Safari 4 will increase linearly with the amount of garbage. The load time can grow as much as 3X longer than normal before GC kicks in. I'm not certain whether this is an artifact of the benchmark or if it actually happens a lot during real-world use. Other browsers exhibit similar halt-the-world GC behavior but only Safari 4 and Opera 10.5alpha have this sawtooth. Firefox's graph stays fairly horizontal but has many more small spikes:</p>
+<p>It appears that the parse-n-load time of a given piece of Javascript in Safari 4 will increase linearly with the amount of garbage. The load time can grow as much as 3X longer than normal before GC kicks in. I'm not certain whether this is an artifact of the benchmark or if it actually happens a lot during real-world use. When I added a line of code that deletes the previous script tag before creating a new one, the sawtooth elongated but did not go away. Other browsers exhibit similar halt-the-world GC behavior but only Safari 4 and Opera 10.5alpha have this sawtooth. Firefox's graph stays fairly horizontal but has many more small spikes:</p>
 
 
 <div class="figure">
@@ -430,16 +430,14 @@
 
 <div class="figure">
   <img src="oh-opera.png" />
-  <img src="opera-10-ram.png" />
   <div class="caption">Figure 4: Opera 10 choking on the parse-n-load benchmark</div>
 </div>
 
-<p>Safari 3 hit the wall even earlier, triggering an Out-of-Memory error after a couple hundred iterations. For some reason I had similar problems with Safari 4 and Scriptaculous, which is why that cell has an asterisk.<p>
+<p>Safari 3 hit the wall even earlier, triggering an Out-of-Memory error after a couple hundred iterations. For some reason I had similar problems with Safari 4 on the Scriptaculous test, which is why that cell has an asterisk.<p>
 
 <div class="figure">
-  <img src="safari-3-ram.png" />
   <img src="safari-3.png" />
-  <div class="caption">Figure 5: Safari 3's memory leaks</div>
+  <div class="caption">Figure 5: Safari 3 got to this point, then threw an OOM</div>
 </div>
 
 
@@ -448,4 +446,4 @@
 <p>The <a href="http://github.com/aristus/parse-n-load">Parse-N-Load benchmark</a> is open source and free for use. It's early and I'm sure there are bugs. If you have other kinds of hardware (Netbooks! Windows! Linux!), please try it out and let me know what you find.</p>
 
 
-<p><i>Many thanks to Adrien Arculeo, Ryan Tomayko of GitHub, Tom Robinson of 280North, and many random internet heros for their help, ideas and corrections.</i></p>
+<p><i>Many thanks to Adrien Arculeo, Ryan Tomayko of GitHub, and random internet heros for their help, ideas and corrections.</i></p>

@@ -3,7 +3,6 @@ Copyright 2010 Carlos Bueno <carlos@bueno.org>. All rights reserved.
 ## HEY READ THIS ##
 Certain files in the test-data/ directory are *closed-source* and are redistributable
 only for the purposes of performance research:
-   test-data/ymail.js
    test-data/github.js
 
 
