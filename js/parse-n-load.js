@@ -6,13 +6,13 @@
 // }
 
 function init() {
-    data = [];
-    doc = YAHOO.util.Dom.get('js').contentWindow.document;
-    win = YAHOO.util.Dom.get('js').contentWindow;
-    progress = YAHOO.util.Dom.get('progress');
-    file = null;
-    runs = 3;
-    runnable = true;
+    window.data = [];
+    window.doc = YAHOO.util.Dom.get('js').contentWindow.document;
+    window.win = YAHOO.util.Dom.get('js').contentWindow;
+    window.progress = YAHOO.util.Dom.get('progress');
+    window.filename = null;
+    window.runs = 3;
+    window.runnable = true;
 }
 window.onload = init;
 
@@ -79,7 +79,7 @@ function flotPlot(data) {
     var lst = map(function(x){return x[1];}, data);
     var mean = avg(lst);
     var variance = stdev(lst, mean);
-    progress.innerHTML = ['<div><b>File:</b> ',file,'</div>',
+    progress.innerHTML = ['<div><b>File:</b> ',filename,'</div>',
                           '<div><b>Mean Average:</b> ',mean.toFixed(0),' msecs</div>',
                           '<div><b>Std. Deviation:</b> ',variance.toFixed(1),' msecs</div>',
                           '<div><small>',navigator.userAgent,'</small></div>']
@@ -105,7 +105,7 @@ function loadFile(i) {
     if (i<runs) {
         doc.close();
         doc.write('<script>var start = (new Date()).getTime();</script>');
-        doc.write('<script id="test" src="'+file+'"></script>');
+        doc.write('<script id="test" src="'+filename+'"></script>');
         doc.write('<script>top.data['+i+'] = ['+i+', (new Date()).getTime() - start];</script>');
         doc.write('<script>var e=document.getElementById("test"); e.parentNode.removeChild(e);</script>');
         doc.write('<script>window.setTimeout(function(){top.loadFile('+(i+1)+');}, 0);</script>');
@@ -136,9 +136,9 @@ if (match('Safari')) {
 
 function runTest() {
     data = new Array(runs);
-    file = 'test-data/'+YAHOO.util.Dom.get('js-file').value;
+    filename = 'test-data/'+YAHOO.util.Dom.get('js-file').value;
     runs = parseInt(YAHOO.util.Dom.get('num-runs').value||'3');
-    if (!file) {
+    if (!filename) {
         alert('Please choose a filename');
         YAHOO.util.Dom.get('js-file').focus();
         return;
@@ -152,7 +152,7 @@ function runTest() {
         for (var i=0; i<runs; i++) {
             doc.open();
             var start = time();
-            doc.write('<script id="test" src="'+file+'"></script>');
+            doc.write('<script id="test" src="'+filename+'"></script>');
             doc.write('<script>var e=document.getElementById("test"); e.parentNode.removeChild(e);</script>');
             doc.close();
             data[i] = [i, (new Date()).getTime() - start];
