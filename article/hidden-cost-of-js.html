@@ -139,19 +139,22 @@
 
 <h2>A Hidden Cost of Javascript</h2>
 
-<p><b>Hello, this is unfinished. If you'd like to help out, please email me at carlos [a] bueno [d] org. Thanks!</b></p>
-
 <p>Any savvy web developer can tell you how many kilobytes their code consumes. They bundle, <a href="http://developer.yahoo.com/performance/rules.html#minify">minify</a>, <a href="http://developer.yahoo.com/performance/rules.html#gzip">compress</a> and tune the data sent out to within an inch of its life. Wire weight is easy to measure and has a direct impact on your application's launch time. But how many milliseconds does it take the user's computer to <i>parse and load</i> your code once it's arrived? What differences are there between CPUs, operating systems, browsers and plugins? What speed leaks are we overlooking?</p>
 <ul>
 <li><a href="#the-test">The Test</a></li>
 <li><a href="#libs">The Libraries</a></li>
 <li><a href="#results">Results</a></li>
 <li><a href="#minifi">Minification</a></li>
-<li><a href="#chrome">The Curious Case of Chrome</a></li>
-<li><a href="#debugging">Debugging the Benchmark</a></li>
-<li><a href="#gc">Adventures in Garbage Collecting</a></li>
-<li><a href="#opera">A Tragic Opera</a></li>
+<li><a href="#conclusion">So What?</a></li>
 <li><a href="#try">Try this at home</a></li>
+
+<li>Appendix
+  <ul>
+    <li><a href="#chrome">The Curious Case of Chrome</a></li>
+    <li><a href="#debugging">Debugging the Benchmark</a></li>
+    <li><a href="#gc">Adventures in Garbage Collecting</a></li>
+    <li><a href="#opera">A Tragic Opera</a></li>
+  </ul>
 </ul>
 
 
@@ -169,10 +172,12 @@
 
 <p>The test harness loads a given block of Javascript from a local file over and over and measures the setup time. My test subjects were the Yahoo User Interface (<a href="http://developer.yahoo.com/yui/3">YUI</a>) libraries, <a href="http://script.aculo.us">Scriptaculous</a>, and <a href="http://jqueryui.com">jQuery UI</a>. I've also included the main Javascript application code from <a href="http://github.com">GitHub</a>.</p>
 
+<p>The core test is as simple as can be: record a start time, load the script, record the end time, and repeat over 1,000 iterations. The tests were run on recently-booted machines with no other programs running. You can <a href="http://github.com/aristus/parse-n-load">check out the project on GitHub</a> and play along at home.</p>
+
 <a name="libs"><h3>The Libraries</h3></a>
 
 <div class="img">
-  <img src="/images/you-like-apples.jpg"/>
+  <img src="./you-like-apples.jpg"/>
 <div xmlns:cc="http://creativecommons.org/ns#" about="http://www.flickr.com/photos/charlietakesphotos/78511025/"><a rel="cc:attributionURL" href="http://www.flickr.com/photos/charlietakesphotos/">Flickr: charlietakesphotos</a></div>
 </div>
 
@@ -183,9 +188,8 @@
   <li><b>jQuery UI 1.7.2</b>, 359KB  <div class="aside">"kitchen sink", minus translations</div></li>
   <li><b>GitHub.com 09 Feb 2010</b>, 211KB <div class="aside">main application code, including jQuery 1.4</div></li>
 </ul>
-<p>The point of this benchmark is to compare browsers. Comparing the parse-n-load of different <i>libraries</i> puts you on more shaky ground. For example, the YUI libraries are more comprehensive than, say, Scriptaculous, but on the other hand it's very rare for an application to load every module as we're doing here. Also, each library has a diffferent approach to initialization. YUI2 does a lot of work up-front while YUI3 does things more lazily. From there you get into a more complicated question about what benefits each library buys you. <i>Do not base the choice of library on this benchmark.</i></p>
+<p>The point of this benchmark is to compare browsers and CPUs. Comparing the parse-n-load of different <i>libraries</i> puts you on shaky ground. For example, the YUI2 libraries are as of this writing more comprehensive than, say, YUI3 or  Scriptaculous. On the other hand it's rare for an application to load every module as we're doing here. Also, each library has a diffferent approach to initialization. YUI2 does a lot of work up-front while YUI3 does things more lazily. From there you get into a complex question about what benefits each library buys you. <i>Do not base the choice of library on this benchmark.</i></p>
 
-<p>The test is as simple as can be: record a start time, load the script, record the end time, and repeat over 1,000 iterations. The tests were run on recently-booted machines with no other programs running. You can <a href="http://github.com/aristus/parse-n-load">check out the project on GitHub</a> and play along at home.</p>
 
 <a name="results"><h3>MacBook Pro 2.26GHz, OSX 10.5.8</h3><br/></a>
 
@@ -454,12 +458,12 @@
 
 <p>NB: the MacBook Air had overheating problems so some of these numbers in this table may be skewed upwards. On the other hand, that's precisely the kind of crap your users have to deal with.</p>
 
-<p>There is a noticeable spread between different browsers on the same hardware and OS. Firefox 3.5 is a few points slower than 3.0, but 3.6 improved on that. Internet Explorer is surprisingly fast at parse-n-load across all tested versions. As expected, minification helps parse-n-load in addition to network transmission time. I didn't include standard deviations because aside from some pathological cases they were small. If you run the benchmark for yourself you will get mean average, stddev, and a time series graph for your enjoyment.</p>
+<p>There is a noticeable spread between different browsers on the same hardware and OS. Firefox 3.5 is a few points slower than 3.0, but 3.6 improved on that. Internet Explorer is surprisingly fast at parse-n-load across all tested versions. I didn't include standard deviations because aside from some pathological cases they were small. If you run the benchmark for yourself you will get mean average, stddev, and a time series graph for your enjoyment.</p>
 
 
-<a name="minifi"><h3>Extra Benefit of Minification</h3></a>
+<a name="minifi"><h3>Minification FTW</h3></a>
 
-<p>Here is a comparison of the YUI libraries in "raw" form (with comments, whitespace, etc) and the same code minified using YUI Compressor:</p>
+<p>Here is a comparison of the YUI libraries in "raw" form (with comments, whitespace, etc) and the same code minified using <a href="http://developer.yahoo.com/yui/compressor">YUI Compressor</a>. As expected, minification helps parse-n-load in addition to network transmission time. This is probably due to the absence of comments and extra whitespace.</p>
 
 <table class="chart" cellspacing="0">
   <tr>
@@ -522,10 +526,33 @@
   <p>Table 3: Code minified with YUI Compressor parses faster. 
 </div>
 
+
+<a name="conclusion"><h3>So What?</h3></a>
+<p>If you have a large amount of Javascript in your application it's natural to bundle it all up into one file to save on network transit time and increase cacheability. But if certain parts of your application only use certain parts of the bundle, you might cause the user to unecessarily parse unused code on every page load. The ideal would be to decouple three things that are now tightly wound together: network transit, parse-n-load, and cacheability. There is a lot of work going on in this space but so far there is no silver bullet.</p>
+
+<ul>
+<li>Alexander Limi from Mozilla <a href="http://limi.net/articles/resource-packages/">has a proposal</a> to use zip files for bundling.</li>
+
+<li>The folks at 280North have <a href="http://cappuccino.org/discuss/2009/11/11/just-one-file-with-cappuccino-0-8/">found a neat way</a> to do multi-file bundling in their Cappuccino framework, using existing technology.</li>
+
+<li>Google is <a href="http://dev.chromium.org/spdy/spdy-whitepaper">proposing an extension</a> to HTTPS that allows multiple concurrent streams over a single TCP connection.</li>
+
+<li><a href="http://blog.sproutcore.com/post/272853740/cut-your-javascript-load-time-90-with-deferred">SproutCore</a> and the <a href="http://googlecode.blogspot.com/2009/09/gmail-for-mobile-html5-series-reducing.html">Google Mobile Team</a> recently demonstrated ways to load Javascript code as dumb strings that is evaluated at a time of the programmer's choosing.</li>
+
+</ul>
+
+<a name="try"><h3>Try this at home</h3></a>
+
+<p>The <a href="http://github.com/aristus/parse-n-load">Parse-N-Load benchmark</a> is open source and free for use. It's early and I'm sure there are bugs. If you have other kinds of hardware (Netbooks! Windows! Linux!), please try it out and let me know what you find.</p>
+
+
+
+<h2><i>Appendix</i></h2>
+
 <a name="chrome"><h3>The Curious Case of Chrome</h3></a>
 <p>While Google Chrome appears to be an order of magnitude faster at parse-n-load, the truth may be a little more complex. Running this benchmark in Chrome sometimes produces sharp cliffs in the time series graph, especially on slower CPUs. That might be the V8 engine's <a href="http://en.wikipedia.org/wiki/Inline_caching">inline caching</a> kicking in. I also suspect it could be caching the machine code it compiles on the first pass. Or this could be something silly like the CPU coming out of low-power mode. If anyone who knows more about what's going on can speak up, please do.</p>
 <div class="figure">
-  <img src="/images/chrome-cliff.png" />
+  <img src="./chrome-cliff.png" />
   <div class="caption">Figure 0: Chrome's V8 Javascript engine has two speeds: fast and <b>very</b> fast.</div>
 </div>
 
@@ -539,7 +566,7 @@
 <p>Every browser seems to have a different system for allocating memory while parsing Javascript code. When you graph the results from Safari 4 this is what I saw initially:</p>
 
 <div class="figure">
-  <img src="/images/spiky-garbage.png" />
+  <img src="./spiky-garbage.png" />
   <div class="caption">Figure 1: the effects of GC halts</div>
 </div>
 
@@ -547,7 +574,7 @@
 <p>Interesting. All of the source files in the benchmark are local so that's not I/O wait. The regularity of huge spikes suggests that the browser is pausing every so often to free up memory via garbage collection. When you remove those spikes another interesting pattern shows up. Here is the same graph with the top 5% of datapoints removed:</p>
 
 <div class="figure">
-  <img src="/images/sawtooth.png" />
+  <img src="./sawtooth.png" />
   <div class="caption">Figure 2: 95th percentile graph of Javascript load times in Safari 4</div>
 </div>
 
@@ -555,7 +582,7 @@
 
 
 <div class="figure">
-  <img src="/images/firefox-35.png" />
+  <img src="./firefox-35.png" />
   <div class="caption">Figure 3: 95th percentile graph of Javascript load times in Firefox 3.5.3</div>
 </div>
 
@@ -565,21 +592,16 @@
 <p>The results for Opera 10.0 and Safari 3 have asterisks because I couldn't get them to run the complete test. Opera got steadily slower up to 250 iterations after which it started serious thrashing and had to be killed. Opera 10.5alpha reportedly has a new Javascript engine, and some quick tests show more sawtooth-like behavior, but it still is not able to complete the full 1,000 iterations before spinning out of control.</p>
 
 <div class="figure">
-  <img src="/images/oh-opera.png" />
+  <img src="./oh-opera.png" />
   <div class="caption">Figure 4: Opera 10 choking on the parse-n-load benchmark</div>
 </div>
 
 <p>Safari 3 hit the wall even earlier, triggering an Out-of-Memory error after a couple hundred iterations. For some reason I had similar problems with Safari 4 on the Scriptaculous test, which is why that cell has an asterisk.<p>
 
 <div class="figure">
-  <img src="/images/safari-3.png" />
+  <img src="./safari-3.png" />
   <div class="caption">Figure 5: Safari 3 got to this point, then threw an OOM</div>
 </div>
-
-
-<a name="try"><h3>Try this at home</h3></a>
-
-<p>The <a href="http://github.com/aristus/parse-n-load">Parse-N-Load benchmark</a> is open source and free for use. It's early and I'm sure there are bugs. If you have other kinds of hardware (Netbooks! Windows! Linux!), please try it out and let me know what you find.</p>
 
 
 <p><i>Many thanks to Adrien Arculeo, Ryan Tomayko of GitHub, Robert Halliday, Eric Miraglia, Lucas Smith, and random internet heroes for their help, ideas and corrections.</i></p>
