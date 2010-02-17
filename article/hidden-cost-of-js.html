@@ -28,37 +28,38 @@
   table.chart {
     cell-padding: 0;
     cell-spacing: 0;
-    border-bottom: solid 1px #ddd;
-    border-right: solid 1px #ddd;
+    border-bottom: solid 1px #999;
+    border-right: solid 1px #999;
     border-collapse: collapse;
   }
 
   table.chart td {
-    border-top: solid 1px #ddd;
-    border-left: solid 1px #ddd;
+    border-top: solid 1px #999;
+    border-left: solid 1px #999;
     margin:0;
+    padding:0;
     font-size: 10pt;
     vertical-align: center;
     text-align: center;
-    height: 40px;
     width: 60px;
   }
 
   table.chart th {
     padding: 4px;
-    background: #dfdfdf;
-    border-right: solid 1px #eee;
+    dddbackground: #dfdfdf;
+    border-right: solid 1px #999;
     font-weight: bold;
     font-size: 10pt;
   }
 
   table.chart td.v {
     white-space: nowrap;
-    text-align: center;
+    text-align: left;
     border: none;
     font-size: 10pt;
-    background: #dfdfdf;
-    border-bottom: solid 1px #eee;
+    ddbackground: #dfdfdf;
+    border-bottom: solid 1px #999;
+    padding: 4px;
   }
 
   div.caption {
@@ -72,11 +73,11 @@
     text-align: center;
     margin: 20px 0;
     padding: 10px;
-    border: solid 1px #ddd;
   }
 
+
   td.asterix {
-    color: #999;
+    color: #666;
   }
   th.asterix {
     color: #666;
@@ -86,20 +87,53 @@
   div.td-container {
     position:relative;
   }
+
+
+  div.barbar {
+    width: 80px;
+    height:30px;
+    position:relative;
+  }
   div.bar {
-    height: 40px;
-    background:#aaa;
+    background-color:#a0d3fe;
     position: absolute;
     top: 0px;
     left: 0px;
+    bottom: 0px;
   }
+
+  div.num {
+     position: absolute;
+     text-align:center;
+     top: 8px;
+     width:100%;
+     text-shadow: 0.1em 0.1em #eee;
+  }
+
   td.asterix div.bar {
-    background-color: #bbb;
+    background-color: #ddd;
   }
 
   div.aside {
-    font-size: 8pt;
+    font-size: 10pt;
     font-weight: normal;
+  }
+
+  .hidden {
+    display:none;
+  }
+
+  li {
+    margin-bottom: 0.5em;
+   }
+
+  div.img {
+    display:inline-block;
+    float:right;
+    margin-right: 20px;
+  }
+  div.img * {
+    font-size: 8pt;
   }
 </style>
 
@@ -108,111 +142,138 @@
 <p><b>Hello, this is unfinished. If you'd like to help out, please email me at carlos [a] bueno [d] org. Thanks!</b></p>
 
 <p>Any savvy web developer can tell you how many kilobytes their code consumes. They bundle, <a href="http://developer.yahoo.com/performance/rules.html#minify">minify</a>, <a href="http://developer.yahoo.com/performance/rules.html#gzip">compress</a> and tune the data sent out to within an inch of its life. Wire weight is easy to measure and has a direct impact on your application's launch time. But how many milliseconds does it take the user's computer to <i>parse and load</i> your code once it's arrived? What differences are there between CPUs, operating systems, browsers and plugins? What speed leaks are we overlooking?</p>
+<ul>
+<li><a href="#the-test">The Test</a></li>
+<li><a href="#libs">The Libraries</a></li>
+<li><a href="#results">Results</a></li>
+<li><a href="#minifi">Minification</a></li>
+<li><a href="#chrome">The Curious Case of Chrome</a></li>
+<li><a href="#debugging">Debugging the Benchmark</a></li>
+<li><a href="#gc">Adventures in Garbage Collecting</a></li>
+<li><a href="#opera">A Tragic Opera</a></li>
+<li><a href="#try">Try this at home</a></li>
+</ul>
+
+
+<a name="the-test"><h3>The Test</h3></a>
 
 <p>As you look at the data below, keep in mind four things:</p>
 <ol>
 <li>Your code is not the only code running on the user's computer</li>
 <li>Parse-n-load time comes down to available CPU cycles and RAM</li>
 <li>The fastest CPUs aren't getting much faster</li>
-<li>The average CPU is getting slower</li>
+<li>The average consumer CPU is getting <i>slower</i></li>
 </ol>
 
 <p>Even if you look at just sexy new hardware it's hard to ignore low-power clients: there are about 50 million netbooks and 43 million iPhones out there, alongside 10-15 million Android devices. Almost all of them are in the 600-1,600 MHz range and have less than 512MB of RAM. A juicy, growing slice of the market wants to use your software on the equivalent of a desktop from 1998. This includes rich Westerners as well as people in the fastest-growing international markets.</p>
 
-<h3>The Test</h3>
+<p>The test harness loads a given block of Javascript from a local file over and over and measures the setup time. My test subjects were the Yahoo User Interface (<a href="http://developer.yahoo.com/yui/3">YUI</a>) libraries, <a href="http://script.aculo.us">Scriptaculous</a>, and <a href="http://jqueryui.com">jQuery UI</a>. I've also included the main Javascript application code from <a href="http://github.com">GitHub</a>.</p>
 
-<p>The test harness loads a given block of Javascript from a local file over and over and measures the setup time. My test subjects were the Yahoo User Interface (<a href="http://developer.yahoo.com/yui/3">YUI</a>) libraries, Scriptaculous, and jQueryUI. By themselves these Javascript files don't do anything except register classes, functions and variables. I've also included the main Javascript application code from GitHub.com.</p>
+<a name="libs"><h3>The Libraries</h3></a>
+
+<div class="img">
+  <img src="/images/you-like-apples.jpg"/>
+<div xmlns:cc="http://creativecommons.org/ns#" about="http://www.flickr.com/photos/charlietakesphotos/78511025/"><a rel="cc:attributionURL" href="http://www.flickr.com/photos/charlietakesphotos/">Flickr: charlietakesphotos</a></div>
+</div>
+
+<ul>
+  <li><b>YUI 2.8.0r4</b>, 390KB <div class="aside">partial (dom, event, datasource, datatable, layout, tabview, treeview, menu)</div></li>
+  <li><b>YUI 3.0 build 1549</b>, 311KB <div class="aside">"kitchen sink"</div></li>
+  <li><b>Scriptaculous 1.8.3</b>, 159KB  <div class="aside">"kitchen sink"</div></li>
+  <li><b>jQuery UI 1.7.2</b>, 359KB  <div class="aside">"kitchen sink", minus translations</div></li>
+  <li><b>GitHub.com 09 Feb 2010</b>, 211KB <div class="aside">main application code, including jQuery 1.4</div></li>
+</ul>
+<p>The point of this benchmark is to compare browsers. Comparing the parse-n-load of different <i>libraries</i> puts you on more shaky ground. For example, the YUI libraries are more comprehensive than, say, Scriptaculous, but on the other hand it's very rare for an application to load every module as we're doing here. Also, each library has a diffferent approach to initialization. YUI2 does a lot of work up-front while YUI3 does things more lazily. From there you get into a more complicated question about what benefits each library buys you. <i>Do not base the choice of library on this benchmark.</i></p>
 
 <p>The test is as simple as can be: record a start time, load the script, record the end time, and repeat over 1,000 iterations. The tests were run on recently-booted machines with no other programs running. You can <a href="http://github.com/aristus/parse-n-load">check out the project on GitHub</a> and play along at home.</p>
 
-
-<h3>MacBook Pro 2.26GHz, OSX 10.5.8</h3><br/>
+<a name="results"><h3>MacBook Pro 2.26GHz, OSX 10.5.8</h3><br/></a>
 
 <table class="chart" cellspacing="0">
   <tr>
   <th style="background:none"></th>
-  <th>Chrome <div class="aside">5.0.307.7</div></th>
-  <th>Safari 4 <div class="aside">4.0.3</div></th>
-  <th>Firefox 3 <div class="aside">3.0.14</div></th>
-  <th>Firefox 3.5 <div class="aside">3.5.3</div></th>
-  <th>Firefox 3.6 <div class="aside">3.6</div></th>
+  <th title="Google Chrome 5.0.307.7">Chrome</th>
+  <th title="Apple Safari 4.0.3">Safari 4</div></th>
+  <th title="Mozilla Firefox 3.0.14">Firefox 3</th>
+  <th title="Mozilla Firefox 3.5.3">Firefox 3.5</th>
+  <th title="Mozilla Firefox 3.6.0">Firefox 3.6</th>
   <th class="asterix">Opera 10*</th>
   <th class="asterix">Safari 3*</th>
   </tr>
 
-  <tr>
-    <td class="v"><b>YUI3</b> <div class="aside">raw, 1,355KB</div></td>
-    <td>62</td>
-    <td>98</td>
-    <td>114</td>
-    <td>128</td>
-    <td>115</td>
-    <td class="asterix">112</td>
-    <td class="asterix">129</td>
+  <tr class="hidden">
+    <td class="v"><b>YUI3</b> (raw)</td>
+<td> <div class="barbar"><div class="bar" style="width:12px">&nbsp;</div><div class="num">62</div></div>
+<td> <div class="barbar"><div class="bar" style="width:19px">&nbsp;</div><div class="num">98</div></div>
+<td> <div class="barbar"><div class="bar" style="width:22px">&nbsp;</div><div class="num">114</div></div>
+<td> <div class="barbar"><div class="bar" style="width:25px">&nbsp;</div><div class="num">128</div></div>
+<td> <div class="barbar"><div class="bar" style="width:23px">&nbsp;</div><div class="num">115</div></div>
+<td class="asterix"> <div class="barbar"><div class="bar" style="width:22px">&nbsp;</div><div class="num">112</div></div>
+<td class="asterix"> <div class="barbar"><div class="bar" style="width:25px">&nbsp;</div><div class="num">129</div></div>
   </tr>
   <tr>
-    <td class="v"><b>YUI3</b> <div class="aside">minified, 311KB</div></td>
-    <td>31</td>
-    <td>47</td>
-    <td>78</td>
-    <td>94</td>
-    <td>83</td>
-    <td class="asterix">62</td>
-    <td class="asterix">111</td>
+    <td class="v"><b>YUI3</b></td>
+<td> <div class="barbar"><div class="bar" style="width:6px">&nbsp;</div><div class="num">31</div></div>
+<td> <div class="barbar"><div class="bar" style="width:9px">&nbsp;</div><div class="num">47</div></div>
+<td> <div class="barbar"><div class="bar" style="width:15px">&nbsp;</div><div class="num">78</div></div>
+<td> <div class="barbar"><div class="bar" style="width:18px">&nbsp;</div><div class="num">94</div></div>
+<td> <div class="barbar"><div class="bar" style="width:16px">&nbsp;</div><div class="num">83</div></div>
+<td class="asterix"> <div class="barbar"><div class="bar" style="width:12px">&nbsp;</div><div class="num">62</div></div>
+<td class="asterix"> <div class="barbar"><div class="bar" style="width:22px">&nbsp;</div><div class="num">111</div></div>
+  </tr>
+  <tr class="hidden">
+    <td class="v"><b>YUI2</b> (raw)</td>
+<td> <div class="barbar"><div class="bar" style="width:4px">&nbsp;</div><div class="num">23</div></div>
+<td> <div class="barbar"><div class="bar" style="width:30px">&nbsp;</div><div class="num">153</div></div>
+<td> <div class="barbar"><div class="bar" style="width:26px">&nbsp;</div><div class="num">131</div></div>
+<td> <div class="barbar"><div class="bar" style="width:28px">&nbsp;</div><div class="num">142</div></div>
+<td> <div class="barbar"><div class="bar" style="width:27px">&nbsp;</div><div class="num">137</div></div>
+<td class="asterix"> <div class="barbar"><div class="bar" style="width:23px">&nbsp;</div><div class="num">116</div></div>
+<td class="asterix"> <div class="barbar"><div class="bar" style="width:30px">&nbsp;</div><div class="num">150</div></div>
   </tr>
   <tr>
-    <td class="v"><b>YUI2</b> <div class="aside">raw, 1,510KB</div></td>
-    <td>23</td>
-    <td>153</td>
-    <td>131</td>
-    <td>142</td>
-    <td>137</td>
-    <td class="asterix">116</td>
-    <td class="asterix">150</td>
-  </tr>
-  <tr>
-    <td class="v"><b>YUI2</b> <div class="aside">minified, 390KB</div></td>
-    <td>11 </td>
-    <td>110</td>
-    <td>77</td>
-    <td>105</td>
-    <td>102</td>
-    <td class="asterix">74</td>
-    <td class="asterix">125</td>
-  </tr>
-
-  <tr>
-    <td class="v"><b>Scriptaculous</b><div class="aside">minified, 159KB</div></td>
-    <td>7</td>
-    <td class="asterix">50*</td>
-    <td>63</td>
-    <td>91</td>
-    <td>71</td>
-    <td class="asterix"></td>
-    <td class="asterix"></td>
+    <td class="v"><b>YUI2</b></td>
+<td> <div class="barbar"><div class="bar" style="width:2px">&nbsp;</div><div class="num">11</div></div>
+<td> <div class="barbar"><div class="bar" style="width:22px">&nbsp;</div><div class="num">110</div></div>
+<td> <div class="barbar"><div class="bar" style="width:15px">&nbsp;</div><div class="num">77</div></div>
+<td> <div class="barbar"><div class="bar" style="width:21px">&nbsp;</div><div class="num">105</div></div>
+<td> <div class="barbar"><div class="bar" style="width:20px">&nbsp;</div><div class="num">102</div></div>
+<td class="asterix"> <div class="barbar"><div class="bar" style="width:14px">&nbsp;</div><div class="num">74</div></div>
+<td class="asterix"> <div class="barbar"><div class="bar" style="width:25px">&nbsp;</div><div class="num">125</div></div>
   </tr>
 
   <tr>
-    <td class="v"><b>jQuery UI</b> <div class="aside">minified, 379KB</div></td>
-    <td>3</td>
-    <td>40</td>
-    <td>84</td>
-    <td>95</td>
-    <td>84</td>
-    <td class="asterix"></td>
-    <td class="asterix"></td>
+    <td class="v"><b>Scriptaculous</b></td>
+<td> <div class="barbar"><div class="bar" style="width:1px">&nbsp;</div><div class="num">7</div></div>
+<td class="asterix"> <div class="barbar"><div class="bar" style="width:10px">&nbsp;</div><div class="num">50*</div></div>
+<td> <div class="barbar"><div class="bar" style="width:12px">&nbsp;</div><div class="num">63</div></div>
+<td> <div class="barbar"><div class="bar" style="width:18px">&nbsp;</div><div class="num">91</div></div>
+<td> <div class="barbar"><div class="bar" style="width:14px">&nbsp;</div><div class="num">71</div></div>
+    <td class="empty"></td>
+    <td class="empty"></td>
+  </tr>
+
+  <tr>
+    <td class="v"><b>jQuery UI</b> </td>
+<td> <div class="barbar"><div class="bar" style="width:0px">&nbsp;</div><div class="num">3</div></div>
+<td> <div class="barbar"><div class="bar" style="width:8px">&nbsp;</div><div class="num">40</div></div>
+<td> <div class="barbar"><div class="bar" style="width:16px">&nbsp;</div><div class="num">84</div></div>
+<td> <div class="barbar"><div class="bar" style="width:19px">&nbsp;</div><div class="num">95</div></div>
+<td> <div class="barbar"><div class="bar" style="width:16px">&nbsp;</div><div class="num">84</div></div>
+    <td class="empty"></td>
+    <td class="empty"></td>
   </tr>
 
 
   <tr>
-    <td class="v"><b>GitHub</b><div class="aside">minified, 211KB</div></td>
-    <td>4 </td>
-    <td>63</td>
-    <td>67</td>
-    <td>80</td>
-    <td>66</td>
-    <td class="asterix"></td>
-    <td class="asterix"></td>
+    <td class="v"><b>GitHub</b></td>
+<td> <div class="barbar"><div class="bar" style="width:0px">&nbsp;</div><div class="num">4</div></div>
+<td> <div class="barbar"><div class="bar" style="width:12px">&nbsp;</div><div class="num">63</div></div>
+<td> <div class="barbar"><div class="bar" style="width:13px">&nbsp;</div><div class="num">67</div></div>
+<td> <div class="barbar"><div class="bar" style="width:16px">&nbsp;</div><div class="num">80</div></div>
+<td> <div class="barbar"><div class="bar" style="width:13px">&nbsp;</div><div class="num">66</div></div>
+    <td class="empty"></td>
+    <td class="empty"></td>
   </tr>
 </table>
 <div class="caption">
@@ -225,88 +286,88 @@
 <table class="chart" cellspacing="0">
   <tr>
   <th style="background:none"></th>
-  <th>Chrome <div class="aside">4.0.249.89</div></th>
-  <th>Firefox 3 <div class="aside">3.0.11</div></th>
-  <th>Firefox 3.5 <div class="aside">3.5.2</div></th>
-  <th>Firefox 3.6 <div class="aside">3.6</div></th>
-  <th>IE 6<div class="aside">6.00.2900</div></th>
-  <th>IE 7<div class="aside">7.00.5730</div></th>
-  <th>IE 8<div class="aside">8.00.6001</div></th>
+  <th title="Google Chrome 4.0.249.89">Chrome</th>
+  <th title="Mozilla Firefox 3.0.11">Firefox 3</th>
+  <th title="Mozilla Firefox 3.5.2">Firefox 3.5</th>
+  <th title="Mozilla Firefox 3.6.0">Firefox 3.6</th>
+  <th title="Microsoft Internet Explorer 6.00.2900">IE 6</th>
+  <th title="Microsoft Internet Explorer 7.00.5730">IE 7</th>
+  <th title="Microsoft Internet Explorer 8.00.6001">IE 8</th>
+  </tr>
+
+  <tr class="hidden">
+    <td class="v"><b>YUI3</b> (raw)</td>
+<td> <div class="barbar"><div class="bar" style="width:7px">&nbsp;</div><div class="num">38</div></div>
+<td> <div class="barbar"><div class="bar" style="width:32px">&nbsp;</div><div class="num">163</div></div>
+<td> <div class="barbar"><div class="bar" style="width:37px">&nbsp;</div><div class="num">189</div></div>
+<td> <div class="barbar"><div class="bar" style="width:35px">&nbsp;</div><div class="num">178</div></div>
+<td> <div class="barbar"><div class="bar" style="width:23px">&nbsp;</div><div class="num">118</div></div>
+<td> <div class="barbar"><div class="bar" style="width:21px">&nbsp;</div><div class="num">106</div></div>
+<td> <div class="barbar"><div class="bar" style="width:20px">&nbsp;</div><div class="num">101</div></div>
+  </tr>
+  <tr>
+    <td class="v"><b>YUI3</b></td>
+<td> <div class="barbar"><div class="bar" style="width:3px">&nbsp;</div><div class="num">19</div></div>
+<td> <div class="barbar"><div class="bar" style="width:23px">&nbsp;</div><div class="num">119</div></div>
+<td> <div class="barbar"><div class="bar" style="width:28px">&nbsp;</div><div class="num">143</div></div>
+<td> <div class="barbar"><div class="bar" style="width:26px">&nbsp;</div><div class="num">134</div></div>
+<td> <div class="barbar"><div class="bar" style="width:13px">&nbsp;</div><div class="num">65</div></div>
+<td> <div class="barbar"><div class="bar" style="width:12px">&nbsp;</div><div class="num">61</div></div>
+<td> <div class="barbar"><div class="bar" style="width:10px">&nbsp;</div><div class="num">51</div></div>
+  </tr>
+  <tr class="hidden">
+    <td class="v" class="hidden"><b>YUI2</b> (raw)</td>
+<td> <div class="barbar"><div class="bar" style="width:7px">&nbsp;</div><div class="num">37</div></div>
+<td> <div class="barbar"><div class="bar" style="width:37px">&nbsp;</div><div class="num">187</div></div>
+<td> <div class="barbar"><div class="bar" style="width:44px">&nbsp;</div><div class="num">220</div></div>
+<td> <div class="barbar"><div class="bar" style="width:31px">&nbsp;</div><div class="num">158</div></div>
+<td> <div class="barbar"><div class="bar" style="width:41px">&nbsp;</div><div class="num">209</div></div>
+<td> <div class="barbar"><div class="bar" style="width:26px">&nbsp;</div><div class="num">132</div></div>
+<td> <div class="barbar"><div class="bar" style="width:24px">&nbsp;</div><div class="num">122</div></div>
+  </tr>
+  <tr>
+    <td class="v"><b>YUI2</b></td>
+<td> <div class="barbar"><div class="bar" style="width:3px">&nbsp;</div><div class="num">18</div></div>
+<td> <div class="barbar"><div class="bar" style="width:28px">&nbsp;</div><div class="num">140</div></div>
+<td> <div class="barbar"><div class="bar" style="width:33px">&nbsp;</div><div class="num">165</div></div>
+<td> <div class="barbar"><div class="bar" style="width:29px">&nbsp;</div><div class="num">148</div></div>
+<td> <div class="barbar"><div class="bar" style="width:17px">&nbsp;</div><div class="num">89</div></div>
+<td> <div class="barbar"><div class="bar" style="width:16px">&nbsp;</div><div class="num">83</div></div>
+<td> <div class="barbar"><div class="bar" style="width:13px">&nbsp;</div><div class="num">69</div></div>
   </tr>
 
   <tr>
-    <td class="v"><b>YUI3</b> <div class="aside">raw, 1,355KB</div></td>
-    <td>38</td>
-    <td>163</td>
-    <td>189</td>
-    <td>178</td>
-    <td>118</td>
-    <td>106</td>
-    <td>101</td>
-  </tr>
-  <tr>
-    <td class="v"><b>YUI3</b> <div class="aside">minified, 311KB</div></td>
-    <td>19</td>
-    <td>119</td>
-    <td>143</td>
-    <td>134</td>
-    <td>65</td>
-    <td>61</td>
-    <td>51</td>
-  </tr>
-  <tr>
-    <td class="v"><b>YUI2</b> <div class="aside">raw, 1,510KB</div></td>
-    <td>37</td>
-    <td>187</td>
-    <td>220</td>
-    <td>158</td>
-    <td>209</td>
-    <td>132</td>
-    <td>122</td>
-  </tr>
-  <tr>
-    <td class="v"><b>YUI2</b> <div class="aside">minified, 390KB</div></td>
-    <td>18</td>
-    <td>140</td>
-    <td>165</td>
-    <td>148</td>
-    <td>89</td>
-    <td>83</td>
-    <td>69</td>
+    <td class="v"><b>Scriptaculous</b></td>
+<td> <div class="barbar"><div class="bar" style="width:2px">&nbsp;</div><div class="num">14</div></div>
+<td> <div class="barbar"><div class="bar" style="width:17px">&nbsp;</div><div class="num">89</div></div>
+<td> <div class="barbar"><div class="bar" style="width:27px">&nbsp;</div><div class="num">135</div></div>
+<td> <div class="barbar"><div class="bar" style="width:23px">&nbsp;</div><div class="num">116</div></div>
+<td> <div class="barbar"><div class="bar" style="width:16px">&nbsp;</div><div class="num">82</div></div>
+<td> <div class="barbar"><div class="bar" style="width:16px">&nbsp;</div><div class="num">84</div></div>
+<td> <div class="barbar"><div class="bar" style="width:8px">&nbsp;</div><div class="num">44</div></div>
   </tr>
 
   <tr>
-    <td class="v"><b>Scriptaculous</b><div class="aside">minified, 159KB</div></td>
-    <td>14</td>
-    <td>89</td>
-    <td>135</td>
-    <td>116</td>
-    <td>82</td>
-    <td>84</td>
-    <td>44</td>
-  </tr>
-
-  <tr>
-    <td class="v"><b>jQuery UI</b> <div class="aside">minified, 379KB</div></td>
-    <td>11</td>
-    <td>119</td>
-    <td>151</td>
-    <td>136</td>
-    <td>62</td>
-    <td>62</td>
-    <td>53</td>
+    <td class="v"><b>jQuery UI</b> </td>
+<td> <div class="barbar"><div class="bar" style="width:2px">&nbsp;</div><div class="num">11</div></div>
+<td> <div class="barbar"><div class="bar" style="width:23px">&nbsp;</div><div class="num">119</div></div>
+<td> <div class="barbar"><div class="bar" style="width:30px">&nbsp;</div><div class="num">151</div></div>
+<td> <div class="barbar"><div class="bar" style="width:27px">&nbsp;</div><div class="num">136</div></div>
+<td> <div class="barbar"><div class="bar" style="width:12px">&nbsp;</div><div class="num">62</div></div>
+<td> <div class="barbar"><div class="bar" style="width:12px">&nbsp;</div><div class="num">62</div></div>
+<td> <div class="barbar"><div class="bar" style="width:10px">&nbsp;</div><div class="num">53</div></div>
   </tr>
 
 
   <tr>
-    <td class="v"><b>GitHub</b><div class="aside">minified, 211KB</div></td>
-    <td>9</td>
-    <td>89</td>
-    <td>110</td>
-    <td>107</td>
-    <td>56</td>
-    <td>54</td>
-    <td>41</td>
+    <td class="v"><b>GitHub</b></td>
+<td> <div class="barbar"><div class="bar" style="width:1px">&nbsp;</div><div class="num">9</div></div>
+<td> <div class="barbar"><div class="bar" style="width:17px">&nbsp;</div><div class="num">89</div></div>
+<td> <div class="barbar"><div class="bar" style="width:22px">&nbsp;</div><div class="num">110</div></div>
+<td> <div class="barbar"><div class="bar" style="width:21px">&nbsp;</div><div class="num">107</div></div>
+<td> <div class="barbar"><div class="bar" style="width:11px">&nbsp;</div><div class="num">56</div></div>
+<td> <div class="barbar"><div class="bar" style="width:10px">&nbsp;</div><div class="num">54</div></div>
+<td> <div class="barbar"><div class="bar" style="width:8px">&nbsp;</div><div class="num">41</div></div>
   </tr>
 </table>
 <div class="caption">
@@ -319,104 +380,166 @@
 <table class="chart" cellspacing="0">
   <tr>
   <th style="background:none"></th>
-  <th>Chrome <div class="aside">5.0.307.7</div></th>
-  <th>Safari 4 <div class="aside">4.0.2</div></th>
-  <th>Firefox 3 <div class="aside">3.0.12</div></th>
-  <th>Firefox 3.5 <div class="aside">3.5.2</div></th>
-  <th>Firefox 3.6 <div class="aside">3.6</div></th>
+  <th title="Google Chrome 5.0.307.7">Chrome</th>
+  <th title="Apple Safari 4.0.2">Safari 4</div></th>
+  <th title="Mozilla Firefox 3.0.12">Firefox 3</th>
+  <th title="Mozilla Firefox 3.5.2">Firefox 3.5</th>
+  <th title="Mozilla Firefox 3.6.0">Firefox 3.6</th>
+  </tr>
+
+  <tr class="hidden">
+    <td class="v"><b>YUI3</b> (raw)</td>
+<td> <div class="barbar"><div class="bar" style="width:3px">&nbsp;</div><div class="num">19</div></div>
+<td> <div class="barbar"><div class="bar" style="width:18px">&nbsp;</div><div class="num">92</div></div>
+<td> <div class="barbar"><div class="bar" style="width:43px">&nbsp;</div><div class="num">219</div></div>
+<td> <div class="barbar"><div class="bar" style="width:46px">&nbsp;</div><div class="num">234</div></div>
+<td> <div class="barbar"><div class="bar" style="width:43px">&nbsp;</div><div class="num">216</div></div>
+  </tr>
+  <tr>
+    <td class="v"><b>YUI3</b></td>
+<td> <div class="barbar"><div class="bar" style="width:1px">&nbsp;</div><div class="num">8</div></div>
+<td> <div class="barbar"><div class="bar" style="width:14px">&nbsp;</div><div class="num">72</div></div>
+<td> <div class="barbar"><div class="bar" style="width:35px">&nbsp;</div><div class="num">178</div></div>
+<td> <div class="barbar"><div class="bar" style="width:34px">&nbsp;</div><div class="num">170</div></div>
+<td> <div class="barbar"><div class="bar" style="width:31px">&nbsp;</div><div class="num">157</div></div>
+  </tr>
+  <tr class="hidden">
+    <td class="v"><b>YUI2</b> (raw)</td>
+<td> <div class="barbar"><div class="bar" style="width:4px">&nbsp;</div><div class="num">24</div></div>
+<td> <div class="barbar"><div class="bar" style="width:50px">&nbsp;</div><div class="num">251</div></div>
+<td> <div class="barbar"><div class="bar" style="width:60px">&nbsp;</div><div class="num">301</div></div>
+<td> <div class="barbar"><div class="bar" style="width:53px">&nbsp;</div><div class="num">268</div></div>
+<td> <div class="barbar"><div class="bar" style="width:49px">&nbsp;</div><div class="num">249</div></div>
+  </tr>
+  <tr>
+    <td class="v"><b>YUI2</b></td>
+<td> <div class="barbar"><div class="bar" style="width:3px">&nbsp;</div><div class="num">15</div></div>
+<td> <div class="barbar"><div class="bar" style="width:36px">&nbsp;</div><div class="num">182</div></div>
+<td> <div class="barbar"><div class="bar" style="width:35px">&nbsp;</div><div class="num">176</div></div>
+<td> <div class="barbar"><div class="bar" style="width:38px">&nbsp;</div><div class="num">190</div></div>
+<td> <div class="barbar"><div class="bar" style="width:35px">&nbsp;</div><div class="num">177</div></div>
   </tr>
 
   <tr>
-    <td class="v"><b>YUI3</b> <div class="aside">raw, 1,355KB</div></td>
-    <td>19</td>
-    <td>92</td>
-    <td>219</td>
-    <td>234</td>
-    <td>216</td>
-  </tr>
-  <tr>
-    <td class="v"><b>YUI3</b> <div class="aside">minified, 311KB</div></td>
-    <td>8</td>
-    <td>72</td>
-    <td>178</td>
-    <td>170</td>
-    <td>157</td>
-  </tr>
-  <tr>
-    <td class="v"><b>YUI2</b> <div class="aside">raw, 1,510KB</div></td>
-    <td>24</td>
-    <td>251</td>
-    <td>301</td>
-    <td>268</td>
-    <td>249</td>
-  </tr>
-  <tr>
-    <td class="v"><b>YUI2</b> <div class="aside">minified, 390KB</div></td>
-    <td>15</td>
-    <td>182</td>
-    <td>176</td>
-    <td>190</td>
-    <td>177</td>
+    <td class="v"><b>Scriptaculous</b></td>
+<td> <div class="barbar"><div class="bar" style="width:2px">&nbsp;</div><div class="num">10</div></div>
+<td> <div class="barbar"><div class="bar" style="width:11px">&nbsp;</div><div class="num">56</div></div>
+<td> <div class="barbar"><div class="bar" style="width:19px">&nbsp;</div><div class="num">97</div></div>
+<td> <div class="barbar"><div class="bar" style="width:32px">&nbsp;</div><div class="num">163</div></div>
+<td> <div class="barbar"><div class="bar" style="width:28px">&nbsp;</div><div class="num">141</div></div>
   </tr>
 
   <tr>
-    <td class="v"><b>Scriptaculous</b><div class="aside">minified, 159KB</div></td>
-    <td>10</td>
-    <td>56</td>
-    <td>97</td>
-    <td>163</td>
-    <td>141</td>
-  </tr>
-
-  <tr>
-    <td class="v"><b>jQuery UI</b> <div class="aside">minified, 379KB</div></td>
-    <td>4</td>
-    <td>61</td>
-    <td>150</td>
-    <td>167</td>
-    <td>151</td>
+    <td class="v"><b>jQuery UI</b> </td>
+<td> <div class="barbar"><div class="bar" style="width:0px">&nbsp;</div><div class="num">4</div></div>
+<td> <div class="barbar"><div class="bar" style="width:12px">&nbsp;</div><div class="num">61</div></div>
+<td> <div class="barbar"><div class="bar" style="width:30px">&nbsp;</div><div class="num">150</div></div>
+<td> <div class="barbar"><div class="bar" style="width:33px">&nbsp;</div><div class="num">167</div></div>
+<td> <div class="barbar"><div class="bar" style="width:30px">&nbsp;</div><div class="num">151</div></div>
   </tr>
 
 
   <tr>
-    <td class="v"><b>GitHub</b><div class="aside">minified, 211KB</div></td>
-    <td>5</td>
-    <td>77</td>
-    <td>131</td>
-    <td>130</td>
-    <td>117</td>
+    <td class="v"><b>GitHub</b></td>
+<td> <div class="barbar"><div class="bar" style="width:1px">&nbsp;</div><div class="num">5</div></div>
+<td> <div class="barbar"><div class="bar" style="width:15px">&nbsp;</div><div class="num">77</div></div>
+<td> <div class="barbar"><div class="bar" style="width:26px">&nbsp;</div><div class="num">131</div></div>
+<td> <div class="barbar"><div class="bar" style="width:26px">&nbsp;</div><div class="num">130</div></div>
+<td> <div class="barbar"><div class="bar" style="width:23px">&nbsp;</div><div class="num">117</div></div>
   </tr>
 </table>
 <div class="caption">
-  <p>Table 1: Parse-and-load, 95th percentile mean. MacBook Air 1.6 GHz Intel Core 2 Duo with 2GB of 1GHz DDR2 RAM.</p>
+  <p>Table 2: Parse-and-load, 95th percentile mean. MacBook Air 1.6 GHz Intel Core 2 Duo with 2GB of 1GHz DDR2 RAM.</p>
 </div>
 
 <p>NB: the MacBook Air had overheating problems so some of these numbers in this table may be skewed upwards. On the other hand, that's precisely the kind of crap your users have to deal with.</p>
 
 <p>There is a noticeable spread between different browsers on the same hardware and OS. Firefox 3.5 is a few points slower than 3.0, but 3.6 improved on that. Internet Explorer is surprisingly fast at parse-n-load across all tested versions. As expected, minification helps parse-n-load in addition to network transmission time. I didn't include standard deviations because aside from some pathological cases they were small. If you run the benchmark for yourself you will get mean average, stddev, and a time series graph for your enjoyment.</p>
 
-<h3>The Curious Case of Chrome</h3>
+
+<a name="minifi"><h3>Extra Benefit of Minification</h3></a>
+
+<p>Here is a comparison of the YUI libraries in "raw" form (with comments, whitespace, etc) and the same code minified using YUI Compressor:</p>
+
+<table class="chart" cellspacing="0">
+  <tr>
+  <th style="background:none"></th>
+  <th title="Google Chrome 4.0.249.89">Chrome</th>
+  <th title="Mozilla Firefox 3.0.11">Firefox 3</th>
+  <th title="Mozilla Firefox 3.5.2">Firefox 3.5</th>
+  <th title="Mozilla Firefox 3.6.0">Firefox 3.6</th>
+  <th title="Microsoft Internet Explorer 6.00.2900">IE 6</th>
+  <th title="Microsoft Internet Explorer 7.00.5730">IE 7</th>
+  <th title="Microsoft Internet Explorer 8.00.6001">IE 8</th>
+  </tr>
+  <tr>
+    <td class="v">YUI3 (<b>raw</b>)</td>
+<td> <div class="barbar"><div class="bar" style="width:7px">&nbsp;</div><div class="num">38</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:32px">&nbsp;</div><div class="num">163</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:37px">&nbsp;</div><div class="num">189</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:35px">&nbsp;</div><div class="num">178</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:23px">&nbsp;</div><div class="num">118</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:21px">&nbsp;</div><div class="num">106</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:20px">&nbsp;</div><div class="num">101</div></div></td>
+  </tr>
+  <tr>
+    <td class="v">YUI3 (<b>minified</b>)</td>
+<td> <div class="barbar"><div class="bar" style="width:3px">&nbsp;</div><div class="num">19</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:23px">&nbsp;</div><div class="num">119</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:28px">&nbsp;</div><div class="num">143</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:26px">&nbsp;</div><div class="num">134</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:13px">&nbsp;</div><div class="num">65</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:12px">&nbsp;</div><div class="num">61</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:10px">&nbsp;</div><div class="num">51</div></div></td>
+  </tr>
+
+  <tr class="clearall">
+    <td style="border-left:none;" colspan="8">&nbsp;</td>
+  </tr>
+
+  <tr>
+    <td class="v">YUI2 (<b>raw</b>)</td>
+<td> <div class="barbar"><div class="bar" style="width:7px">&nbsp;</div><div class="num">37</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:37px">&nbsp;</div><div class="num">187</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:44px">&nbsp;</div><div class="num">220</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:31px">&nbsp;</div><div class="num">158</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:41px">&nbsp;</div><div class="num">209</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:26px">&nbsp;</div><div class="num">132</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:24px">&nbsp;</div><div class="num">122</div></div></td>
+  </tr>
+  <tr>
+    <td class="v">YUI2 (<b>minified</b>)</td>
+<td> <div class="barbar"><div class="bar" style="width:3px">&nbsp;</div><div class="num">18</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:28px">&nbsp;</div><div class="num">140</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:33px">&nbsp;</div><div class="num">165</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:29px">&nbsp;</div><div class="num">148</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:17px">&nbsp;</div><div class="num">89</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:16px">&nbsp;</div><div class="num">83</div></div></td>
+<td> <div class="barbar"><div class="bar" style="width:13px">&nbsp;</div><div class="num">69</div></div></td>
+  </tr>
+</table>
+<div class="caption">
+  <p>Table 3: Code minified with YUI Compressor parses faster. 
+</div>
+
+<a name="chrome"><h3>The Curious Case of Chrome</h3></a>
 <p>While Google Chrome appears to be an order of magnitude faster at parse-n-load, the truth may be a little more complex. Running this benchmark in Chrome sometimes produces sharp cliffs in the time series graph, especially on slower CPUs. That might be the V8 engine's <a href="http://en.wikipedia.org/wiki/Inline_caching">inline caching</a> kicking in. I also suspect it could be caching the machine code it compiles on the first pass. Or this could be something silly like the CPU coming out of low-power mode. If anyone who knows more about what's going on can speak up, please do.</p>
 <div class="figure">
-  <img src="chrome-cliff.png" />
+  <img src="/images/chrome-cliff.png" />
   <div class="caption">Figure 0: Chrome's V8 Javascript engine has two speeds: fast and <b>very</b> fast.</div>
 </div>
 
 
-<h3>OMGWTFYUI</h3>
-<p>Comparing the parse-n-load of different libraries is tricky because they all have different feature sets. For example, as of this writing YUI2 is much more complete than YUI3, and I only included a few widgets like DataTable and TreeView to create a slug of Javascript of a comparable size. It's probable that the way these libraries are written affects setup times but it's too early to tell exactly what's going on. From there you get into a more complicated question about what benefits each library buys you. I would not base the choice of library on a this benchmark.</p>
-
-
-<h3>Debugging the Benchmark</h3>
+<a name="debugging"><h3>Debugging the Benchmark</h3></a>
 <p>The first problem that came up was different blocking behavior between browsers. In Safari 4 (but not 3) if you create a script tag that points to an external file, that action will block, ie, wait until that file is completely parsed and loaded. This makes timing it very easy. In Firefox, however, this action asynchronous: the statement that creates the script element returns immediately and the file is loaded in a separate thread. This means you have to set up a callback in the separate thread to both measure elapsed time and kick off the next iteration of the test. You have to be <a href="http://paulbarry.com/articles/2009/08/30/tail-call-optimization">careful not the blow the stack</a> with too many nested function calls. Google Chrome is also asynchronous and has an altogether different stack behavior. If all that wasn't enough, browsers have very different memory allocation behavior, of which more (oh, much more) below.</p>
 
 
-<h3>Adventures in Garbage Collecting</h3>
+<a name="gc"><h3>Adventures in Garbage Collecting</h3></a>
 
 <p>Every browser seems to have a different system for allocating memory while parsing Javascript code. When you graph the results from Safari 4 this is what I saw initially:</p>
 
 <div class="figure">
-  <img src="spiky-garbage.png" />
+  <img src="/images/spiky-garbage.png" />
   <div class="caption">Figure 1: the effects of GC halts</div>
 </div>
 
@@ -424,7 +547,7 @@
 <p>Interesting. All of the source files in the benchmark are local so that's not I/O wait. The regularity of huge spikes suggests that the browser is pausing every so often to free up memory via garbage collection. When you remove those spikes another interesting pattern shows up. Here is the same graph with the top 5% of datapoints removed:</p>
 
 <div class="figure">
-  <img src="sawtooth.png" />
+  <img src="/images/sawtooth.png" />
   <div class="caption">Figure 2: 95th percentile graph of Javascript load times in Safari 4</div>
 </div>
 
@@ -432,31 +555,31 @@
 
 
 <div class="figure">
-  <img src="firefox-35.png" />
+  <img src="/images/firefox-35.png" />
   <div class="caption">Figure 3: 95th percentile graph of Javascript load times in Firefox 3.5.3</div>
 </div>
 
 
 
-<h3>A Tragic Opera</h3>
+<a name="opera"><h3>A Tragic Opera</h3></a>
 <p>The results for Opera 10.0 and Safari 3 have asterisks because I couldn't get them to run the complete test. Opera got steadily slower up to 250 iterations after which it started serious thrashing and had to be killed. Opera 10.5alpha reportedly has a new Javascript engine, and some quick tests show more sawtooth-like behavior, but it still is not able to complete the full 1,000 iterations before spinning out of control.</p>
 
 <div class="figure">
-  <img src="oh-opera.png" />
+  <img src="/images/oh-opera.png" />
   <div class="caption">Figure 4: Opera 10 choking on the parse-n-load benchmark</div>
 </div>
 
 <p>Safari 3 hit the wall even earlier, triggering an Out-of-Memory error after a couple hundred iterations. For some reason I had similar problems with Safari 4 on the Scriptaculous test, which is why that cell has an asterisk.<p>
 
 <div class="figure">
-  <img src="safari-3.png" />
+  <img src="/images/safari-3.png" />
   <div class="caption">Figure 5: Safari 3 got to this point, then threw an OOM</div>
 </div>
 
 
-<h3>Try this at home</h3>
+<a name="try"><h3>Try this at home</h3></a>
 
 <p>The <a href="http://github.com/aristus/parse-n-load">Parse-N-Load benchmark</a> is open source and free for use. It's early and I'm sure there are bugs. If you have other kinds of hardware (Netbooks! Windows! Linux!), please try it out and let me know what you find.</p>
 
 
-<p><i>Many thanks to Adrien Arculeo, Ryan Tomayko of GitHub, and random internet heroes for their help, ideas and corrections.</i></p>
+<p><i>Many thanks to Adrien Arculeo, Ryan Tomayko of GitHub, Robert Halliday, Eric Miraglia, Lucas Smith, and random internet heroes for their help, ideas and corrections.</i></p>
