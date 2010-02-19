@@ -7,12 +7,28 @@
 
 function init() {
     window.data = [];
+    window.jsframe = YAHOO.util.Dom.get('js');
     window.doc = YAHOO.util.Dom.get('js').contentWindow.document;
     window.win = YAHOO.util.Dom.get('js').contentWindow;
     window.progress = YAHOO.util.Dom.get('progress');
     window.filename = null;
     window.runs = 3;
+    window.i = 0;
     window.runnable = true;
+
+    window.icon = '';
+    if (match('Safari')) {
+        icon = 'safari';
+        if (match('Chrome')) {
+            icon = 'chrome';
+        }
+    } else if (match('Firefox')) {
+        icon = 'firefox';
+    } else if (match('Opera')) {
+        icon = 'opera';
+    } else if (match('MSIE')) {
+        icon = 'ie';
+    }
 }
 window.onload = init;
 
@@ -52,6 +68,7 @@ function avg(lst) {
 
 function stdev(lst, mean) {
     var tot = sum(lst);
+    mean = mean || avg(lst);
     var squares = map(function(x){return (x-mean)*(x-mean);}, lst);
     return Math.sqrt(sum(squares) / (lst.length-1));
 }
@@ -72,7 +89,6 @@ function nthPercentile(lst, n) {
 }
 
 function flotPlot(data) {
-    //data = nonzero(data); // happens ocassionally on FF3.0
     if (YAHOO.util.Dom.get('ignore-spikes').checked) {
         data = nthPercentile(data, 0.95);
     }
@@ -100,12 +116,34 @@ function match(s) {
     return nav.indexOf(s) !== -1;
 }
 
+function delel(el) {
+    el.parentNode.removeChild(el);
+}
+
+function recordTrial(msec) {
+    data[i] = [i, msec];
+    if (i<runs) {
+        i += 1;
+        loadFile2();
+    } else {
+        flotPlot(data);
+    }
+}
+
+function loadFile2() {
+    delel(jsframe);
+    jsframe = document.createElement('iframe');
+    jsframe.is = 'js';
+    jsframe.src = filename + '.html';
+    document.body.appendChild(jsframe);
+}
+
 //for non-blocking browsers. careful not to blow the stack.
 function loadFile(i) {
     if (i<runs) {
         doc.close();
         doc.write('<script>var start = (new Date()).getTime();</script>');
-        doc.write('<script id="test" src="'+filename+'"></script>');
+        doc.write('<script id="test" src="'+filename+'.js"></script>');
         doc.write('<script>top.data['+i+'] = ['+i+', (new Date()).getTime() - start];</script>');
         doc.write('<script>var e=document.getElementById("test"); e.parentNode.removeChild(e);</script>');
         doc.write('<script>window.setTimeout(function(){top.loadFile('+(i+1)+');}, 0);</script>');
@@ -120,27 +158,19 @@ function loadFile(i) {
 var nav = navigator.userAgent;
 var blocking = (match('Safari') && !match('Chrome') && match('Version/4')) || match('Opera');
 
-var icon = '';
-if (match('Safari')) {
-    icon = 'safari';
-    if (match('Chrome')) {
-        icon = 'chrome';
-    }
-} else if (match('Firefox')) {
-    icon = 'firefox';
-} else if (match('Opera')) {
-    icon = 'opera';
-} else if (match('MSIE')) {
-    icon = 'ie';
-}
 
-function runTest() {
+function runInit() {
+    runs = parseInt(YAHOO.util.Dom.get('num-runs').value||'3');
     data = new Array(runs);
     filename = 'test-data/'+YAHOO.util.Dom.get('js-file').value;
-    runs = parseInt(YAHOO.util.Dom.get('num-runs').value||'3');
-    if (!filename) {
-        alert('Please choose a filename');
-        YAHOO.util.Dom.get('js-file').focus();
+}
+
+
+function runTest() {
+    runInit();
+
+    if (YAHOO.util.Dom.get('test-version').value === '2') {
+        loadFile2();
         return;
     }
 
@@ -152,7 +182,7 @@ function runTest() {
         for (var i=0; i<runs; i++) {
             doc.open();
             var start = time();
-            doc.write('<script id="test" src="'+filename+'"></script>');
+            doc.write('<script id="test" src="'+filename+'.js"></script>');
             doc.write('<script>var e=document.getElementById("test"); e.parentNode.removeChild(e);</script>');
             doc.close();
             data[i] = [i, (new Date()).getTime() - start];
