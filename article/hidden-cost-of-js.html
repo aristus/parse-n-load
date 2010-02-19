@@ -1,5 +1,4 @@
 <style>
-
   table.chart {
     cell-padding: 0;
     cell-spacing: 0;
@@ -170,7 +169,7 @@
   <th title="Mozilla Firefox 3.0.14">Firefox 3</th>
   <th title="Mozilla Firefox 3.5.3">Firefox 3.5</th>
   <th title="Mozilla Firefox 3.6.0">Firefox 3.6</th>
-  <th title="">Opera 10</th>
+  <th title="Opera 10.10 b6795">Opera 10</th>
   <th title="Apple Safari 3.0.4">Safari 3</th>
   </tr>
 
@@ -231,9 +230,9 @@
 </table>
 <div class="caption">
   <p>Table 0: Parse-and-load times in milliseconds for various Javascript libraries and browsers, 95th percentile mean. MacBook Pro 2.26 GHz Intel Core 2 Duo with 4GB of 1GHz DDR3 RAM.
-    <br/>* Incomplete test, only 100 iterations. See "Tragic Opera" below.
   </p>
 </div>
+
 
 
 <h3>Presario R3000 1.6GHz, WinXP SP3</h3><br/>
@@ -408,6 +407,8 @@
 
 <p>NB: the MacBook Air had overheating problems so some of these numbers in this table may be skewed upwards. On the other hand, that's precisely the kind of crap your users have to deal with.</p>
 
+<p>So it seems that there is a measurable cost to parse-n-load, and parsing speed does not seem to be correlated with the speed of the interpreter or DOM. Chrome has some anomalies in the data so for now I am withholding judgement. See "<a href="#chrome">Curious Case of Chrome</a>" in the appendix.
+
 <p>There is a noticeable spread between different browsers on the same hardware and OS. Firefox 3.5 is a few points slower than 3.0, but 3.6 improved on that. Internet Explorer is surprisingly fast at parse-n-load across all tested versions. I didn't include standard deviations because aside from some pathological cases they were small. If you run the benchmark for yourself you will get mean average, stddev, and a time series graph for your enjoyment.</p>
 
 
@@ -566,4 +567,4 @@
 </div>
 
 
-<p><i>Many thanks to Adrien Arculeo, Ryan Tomayko of GitHub, Geoffrey Sneddon of Opera Software, Robert Halliday, Eric Miraglia, Lucas Smith, and random internet heroes for their help, ideas and corrections.</i></p>
+<p><i>Many thanks to Adrien Arculeo, Ryan Tomayko (GitHub), Geoffrey Sneddon (Opera Software), Robert Halliday (Yahoo), Eric Miraglia (Yahoo), Lucas Smith (Yahoo), and random internet heroes for their help, ideas and corrections.</i></p>
